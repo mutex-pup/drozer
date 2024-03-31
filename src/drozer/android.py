@@ -490,10 +490,8 @@ optional arguments:
                     extras.putParcelableArrayList("android.intent.extra.STREAM", yayListyay)
                     
                 elif extra[0] == "parcelable":
-                    yayUriClassyay = context.klass("android.net.Uri")
-                    yayIntentyay = context.new("android.content.Intent")
-                    yayRectClassyay = context.klass("android.graphics.Rect")
-                    yayExtrasyay = context.new("android.os.Bundle")
+
+                    yayIntentClassYay = context.klass("android.content.Intent")
 
                     if extra[2].lower().startswith("content://"): # content:// URI
                         yayExtrayay = yayUriClassyay.parse(extra[2])
@@ -508,75 +506,21 @@ optional arguments:
                         yayExtrayay = yayUriClassyay.parse(extra[2])
                         extras.putParcelable(extra[1], yayExtrayay)
                     elif extra[2].lower().startswith("intent://"): # intent:// intent
-                        yayDatayay = extra[2][9:].split("#")[0]
-                        if not yayDatayay:
-                            yayDatayay = ""
+                        # use internal intent parser to create new intent
+                        yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 0)
+                        # manually add launchFlags
                         yayUriArryay = extra[2][9:].split("#")[1].split(";")
+                        yayUriArryay.remove("Intent")
+                        yayUriArryay.remove("end")
                         yayIntyay = len(yayUriArryay)
                         while yayIntyay != 0:
                             yayKeyyay = yayUriArryay[yayIntyay - 1].split("=")[0]
                             yayValueyay = yayUriArryay[yayIntyay - 1].split("=")[1]
-                            # main stuff
-                            if yayKeyyay == "action":
-                                yayIntentyay.setAction(yayValueyay)
-                            elif yayKeyyay == "category":
-                                yayIntentyay.addCategory(yayValueyay)
-                            elif yayKeyyay == "type":
-                                yayIntentyay.setType(yayValueyay)
-                            elif yayKeyyay == "identifier":
-                                yayIntentyay.setIdentifier(yayValueyay)
-                            elif yayKeyyay == "launchFlags":
-                                yayIntentyay.addFlags(context.arg(int(yayValueyay), obj_type="int"))
-                            elif yayKeyyay == "package":
-                                yayIntentyay.setPackage(yayValueyay)
-                            elif yayKeyyay == "component":
-
-                                yayTempIntyay = len(yayUriArryay)
-                                while yayTempIntyay != 0:
-                                    yayTempKeyyay = yayUriArryay[yayTempIntyay - 1].split("=")[0]
-                                    yayTempValueyay = yayUriArryay[yayTempIntyay - 1].split("=")[1]
-                                    if yayTempKeyyay == "package":
-                                        yayComponentyay = context.new("android.content.ComponentName", yayTempValueyay, yayValueyay)
-                                        yayIntentyay.setComponent(yayComponentyay)
-                                    yayTempIntyay = yayTempIntyay - 1
-
-                            elif yayKeyyay == "scheme":
-                                yayDatayay = yayValueyay + "://" + yayDatayay
-                            elif yayKeyyay == "sourceBounds":
-                                yayIntentyay.setSourceBounds(yayRectClassyay.unflattenFromString(yayValueyay))
-                            # extras
-                            elif yayKeyyay.startswith("S."):
-                                yayExtrasyay.putString(yayKeyyay[2:], context.arg(str(yayValueyay), obj_type="string"))
-                            elif yayKeyyay.startswith("B."):
-                                yayExtrasyay.putBoolean(yayKeyyay[2:], context.arg(yayValueyay.lower().startswith("t"), obj_type="boolean"))
-                            elif yayKeyyay.startswith("b."):
-                                yayExtrasyay.putByte(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="byte"))
-                            elif yayKeyyay.startswith("c."):
-                                yayExtrasyay.putChar(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="char"))
-                            elif yayKeyyay.startswith("d."):
-                                yayExtrasyay.putDouble(yayKeyyay[2:], context.arg(float(yayValueyay), obj_type="double"))
-                            elif yayKeyyay.startswith("i."):
-                                yayExtrasyay.putInt(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="int"))
-                            elif yayKeyyay.startswith("f."):
-                                yayExtrasyay.putFloat(yayKeyyay[2:], context.arg(float(yayValueyay), obj_type="float"))
-                            elif yayKeyyay.startswith("l."):
-                                yayExtrasyay.putLong(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="long"))
-                            elif yayKeyyay.startswith("s."):
-                                yayExtrasyay.putShort(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="short"))
-                            elif yayKeyyay.startswith("p."):
-                                yayListyay = context.new("java.util.ArrayList")
-                                yayListyay.add(yayUriClassyay.parse(yayValueyay))
-                                yayExtrasyay.putParcelableArrayList(yayKeyyay[2:], yayListyay)
-                                
+                            if yayKeyyay == "launchFlags":
+                                yayParcelableIntentyay.addFlags(context.arg(int(yayValueyay), obj_type="int"))
                             yayIntyay = yayIntyay - 1
-
-                        if yayDatayay:
-                            yayIntentyay.setData(yayUriClassyay.parse(yayDatayay))
-
-                        if yayExtrasyay:
-                            yayIntentyay.putExtras(yayExtrasyay)
-
-                        extras.putParcelable(extra[1], yayIntentyay)
+                        # add the new parcelable extraa intent
+                        extras.putParcelable(extra[1], yayParcelableIntentyay)
                 else:
                     extras.putParcelable(extra[1], yayExtrayay)
 
