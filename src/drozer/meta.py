@@ -31,7 +31,7 @@ class Version:
 # TODO License check this stuff
 name = "drozer"
 vendor = "WithSecure"
-version = Version("3.0.0", "2020-05-18")
+version = Version("3.0.1", "2020-05-18")
 
 contact = "drozer@withsecure.com"
 description = "The Leading Android Security Testing Framework"
