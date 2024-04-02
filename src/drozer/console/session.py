@@ -53,8 +53,10 @@ class Session(cmd.Cmd):
             self.stderr = DecolouredStream(self.stderr)
 
         m = Module(self)
-        if m.has_context():
+        if m.has_context() and self.reflector.resolve("android.os.Build$VERSION").SDK_INT >= 24:
             dataDir = str(m.getContext().getDataDir().getCanonicalPath().native())
+        elif m.has_context():
+            dataDir = str(m.getContext().getApplicationInfo().dataDir)
         else:
             dataDir = str(m.new("java.io.File", ".").getCanonicalPath().native())
         self.variables = {  'PATH': dataDir +'/bin:/sbin:/vendor/bin:/system/sbin:/system/bin:/system/xbin',
