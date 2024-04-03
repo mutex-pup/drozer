@@ -2,8 +2,16 @@ import cmd
 import os
 from platform import platform
 
-#TODO: Replace with pyreadline3?
-import readline
+# readline works on linux/mac
+# pyreadline3 works on windows
+# or alternatively if you have none of those that's also fine, you just won't get tab-complete
+try:
+    import readline
+except ModuleNotFoundError:
+    try:
+        from pyreadline3 import Readline as readline
+    except:
+        pass
 
 import shlex
 import sys
