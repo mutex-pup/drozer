@@ -5,11 +5,14 @@ from platform import platform
 # readline works on linux/mac
 # pyreadline3 works on windows
 # or alternatively if you have none of those that's also fine, you just won't get tab-complete
+has_readline = False
 try:
     import readline
+    has_readline = True
 except ModuleNotFoundError:
     try:
         from pyreadline3 import Readline as readline
+        has_readline = True
     except:
         pass
 
@@ -111,7 +114,7 @@ class Cmd(cmd.Cmd):
         """
 
         if state == 0:
-            if "readline" in sys.modules:
+            if has_readline:
                 origline = readline.get_line_buffer()
                 line = origline.lstrip()
                 stripped = len(origline) - len(line)
@@ -273,7 +276,7 @@ class Cmd(cmd.Cmd):
             self.stdout.write(str(self.intro) + "\n")
 
     def push_completer(self, completer, history_file=None):
-        if "readline" in sys.modules:
+        if has_readline:
             self.__completer_stack.append(readline.get_completer())
             readline.set_completer(completer)
             readline.set_completer_delims(readline.get_completer_delims().replace("/", ""))
@@ -297,7 +300,7 @@ class Cmd(cmd.Cmd):
             readline.parse_and_bind(self.completekey + ": complete")
 
     def pop_completer(self):
-        if "readline" in sys.modules:
+        if has_readline:
             if self.__history_stack[-1] != None:
                 readline.write_history_file(self.__history_stack.pop())
             else:
