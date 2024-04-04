@@ -41,7 +41,7 @@ To help with making sure drozer can be run on all systems, a Docker container wa
 You can use `pip` to install the latest release of drozer:
 
 ```
-pip install drozer-<version>.whl
+sudo pip install drozer-<version>.whl
 ```
 
 ### Building and Installing (Kali / Debian)
@@ -64,7 +64,7 @@ python setup.py bdist_wheel
 Finally, install drozer
 
 ```
-pip install dist/drozer-<version>-py3-none-any.whl
+sudo pip install dist/drozer-<version>-py3-none-any.whl
 ```
 
 
