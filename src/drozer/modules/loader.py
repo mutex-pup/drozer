@@ -56,6 +56,9 @@ class ModuleLoader(object):
                 except IndentationError:
                     sys.stderr.write("Skipping source file at %s. Indentation Error.\n" % modules[i])
                     pass
+                except Exception as e:
+                    sys.stderr.write("Skipping source file at {0}. {1}.\n".format(modules[i], type(e).__name__))
+                    pass
 
     def __load(self, base):
         """
