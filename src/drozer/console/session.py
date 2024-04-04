@@ -83,11 +83,11 @@ class Session(cmd.Cmd):
         modules = self.modules.all(permissions=self.permissions(), prefix=self.__base)
         
         if self.__base == "":
-            modules = filter(lambda m: m.startswith(text), modules)
+            modules = list(filter(lambda m: m.startswith(text), modules))
         elif text.startswith("."):
-            modules = filter(lambda m: m.startswith(text[1:]), modules)
+            modules = list(filter(lambda m: m.startswith(text[1:]), modules))
         else:
-            modules = map(lambda m: m[len(self.__base):], filter(lambda m: m.startswith(self.__base + text), modules))
+            modules = map(lambda m: m[len(self.__base):], list(filter(lambda m: m.startswith(self.__base + text), modules)))
         
         #if len(modules) == 1 and text == modules[0]:
         #    return []
@@ -100,14 +100,14 @@ class Session(cmd.Cmd):
         """
 
         if self.__base == "":
-            return filter(lambda m: m.startswith(text), self.__namespaces())
+            return list(filter(lambda m: m.startswith(text), self.__namespaces()))
         elif text.startswith("."):
             namespaces = self.__namespaces(global_scope=True)
             namespaces.add("..")
 
-            return map(lambda m: "." + m, filter(lambda m: m.startswith(text[1:]), namespaces))
+            return map(lambda m: "." + m, list(filter(lambda m: m.startswith(text[1:]), namespaces)))
         else:
-            return map(lambda m: m[len(self.__base):], filter(lambda m: m.startswith(self.__base + text), self.__namespaces()))
+            return map(lambda m: m[len(self.__base):], list(filter(lambda m: m.startswith(self.__base + text), self.__namespaces())))
 
     def context(self):
         if self.has_context():
@@ -303,17 +303,17 @@ class Session(cmd.Cmd):
         
         term = len(argv) > 0 and argv[0] or None
         
-        s_modules = self.modules.all(contains=term, permissions=self.permissions(), prefix=self.__base)
+        s_modules = list(self.modules.all(contains=term, permissions=self.permissions(), prefix=self.__base))
         
         if include_unsupported:
-            u_modules = filter(lambda m: not m in s_modules, self.modules.all(contains=term, permissions=None, prefix=self.__base))
+            u_modules = list(filter(lambda m: not m in s_modules, self.modules.all(contains=term, permissions=None, prefix=self.__base)))
         else:
             u_modules = []
 
         self.stdout.write(console.format_dict(dict(map(lambda m: [m, self.modules.get(m).name], s_modules))) + "\n")
         
         if len(u_modules) > 0:
-            self.stdout.write("\nUnsupported Modules:\n\n")
+            self.stdout.write("Unsupported Modules:\n\n")
             self.stdout.write(console.format_dict(dict(map(lambda m: [m, self.modules.get(m).name], u_modules))) + "\n")
 
     def do_load(self, args):
