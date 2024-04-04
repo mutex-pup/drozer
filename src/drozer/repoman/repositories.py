@@ -24,7 +24,8 @@ class Repository(object):
         
         If the path already exists, no repository will be created.
         """
-        
+        path = os.path.abspath(path)
+
         if not os.path.exists(path):
             os.makedirs(path)
             
@@ -42,6 +43,7 @@ class Repository(object):
         
         If the path is not a drozer Repository, it will not be removed.
         """
+        path = os.path.abspath(path)
         
         if cls.is_repo(path):
             cls.disable(path)
@@ -56,6 +58,7 @@ class Repository(object):
         Remove a drozer Module Repository from the collection, but leave the file
         system intact.
         """
+        path = os.path.abspath(path)
         
         if cls.is_repo(path):
             Configuration.delete('repositories', path)
@@ -77,6 +80,7 @@ class Repository(object):
         Re-add a drozer Module Repository to the collection, that was created manually
         or has previously been removed with #disable().
         """
+        path = os.path.abspath(path)
         
         if cls.looks_like_repo(path):
             Configuration.set('repositories', path, path)
@@ -88,6 +92,7 @@ class Repository(object):
         """
         Tests if a path represents a drozer Repository.
         """
+        path = os.path.abspath(path)
         
         return path in cls.all() and cls.looks_like_repo(path)
     
@@ -96,6 +101,7 @@ class Repository(object):
         """
         Tests if a path looks like a drozer Repository.
         """
+        path = os.path.abspath(path)
         
         return os.path.exists(path) and \
             os.path.exists(os.path.join(path, "__init__.py"))  and \
