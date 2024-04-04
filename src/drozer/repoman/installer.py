@@ -142,10 +142,6 @@ class ModuleInstaller(object):
         index = set([])
         
         for url in Remote.all():
-
-            # currently borked
-            # the URL leads to a github repo that doesn't exist
-
             source = Remote.get(url).download("INDEX.xml")
             
             if source != None:

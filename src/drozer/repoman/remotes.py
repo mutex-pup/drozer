@@ -1,6 +1,7 @@
 import http.client as httplib
 import io
 import urllib.request as urllib2
+from urllib.parse import urlparse
 
 from drozer.configuration import Configuration
 
@@ -27,7 +28,7 @@ class Remote(object):
         """
 
         if not Configuration.has_section('remotes'):
-            cls.create("https://raw.github.com/mwrlabs/drozer-modules/repository/")
+            cls.create("https://raw.githubusercontent.com/WithSecureLabs/drozer-modules/repository/")
 
         return Configuration.get_all_values('remotes')
 
@@ -86,11 +87,7 @@ class Remote(object):
 
         try:
             return self.getPath(module)
-        except urllib2.HTTPError:
-            # such as not found: there is no module to download
-            raise NetworkException()
-        except urllib2.URLError as e:
-            # such as connection refused: the server simply isn't there
+        except Exception as e:
             raise NetworkException()
 
     def getPath(self, path):
@@ -98,11 +95,18 @@ class Remote(object):
         Fetch a file from the remote.
         """
 
-        r = urllib2.urlopen(self.buildPath(path))
-        socket = FakeSocket(r.read())
-        r.close()
-
-        response = httplib.HTTPResponse(socket)
+        uri = self.buildPath(path)
+        # TODO: This parsing logic is ugly, but it Works™
+        parsed_uri = urlparse(uri)
+        host = parsed_uri.netloc
+        get_path = parsed_uri.path
+        scheme = parsed_uri.scheme
+        if(scheme == "https"):
+            conn = httplib.HTTPSConnection(host)
+        else:
+            conn = httplib.HTTPConnection(host)
+        conn.request("GET", get_path, headers={"Host": host})
+        response = conn.getresponse()
         response.begin()
         data = response.read()
         response.close()

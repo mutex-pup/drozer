@@ -3,6 +3,7 @@ from WithSecure.common import cli, console, text
 from drozer.repoman.installer import ModuleInstaller
 from drozer.repoman.remotes import Remote, NetworkException, UnknownRemote
 from drozer.repoman.repositories import Repository, NotEmptyException, UnknownRepository
+import os
 
 class ModuleManager(cli.Base):
     """
@@ -86,7 +87,7 @@ class ModuleManager(cli.Base):
         with a choice.
         """
         
-        repositories = Repository.all()
+        repositories = list(Repository.all())
         
         if len(repositories) == 1:
             return repositories[0]
@@ -97,11 +98,12 @@ class ModuleManager(cli.Base):
                     path = self.ask("Path to new repository: ")
                     
                     try:
+                        path = os.path.abspath(path)
                         Repository.create(path)
                         
                         print("Initialised repository at %s.\n" % path)
                         
-                        return Repository.all()[0]
+                        return list(Repository.all())[0]
                     except NotEmptyException:
                         print("The target (%s) already exists.\n" % path)
                 
@@ -269,6 +271,7 @@ class RepositoryManager(cli.Base):
         
         if len(arguments.options) == 1:
             path = arguments.options[0]
+            path = os.path.abspath(path)
             
             try:
                 Repository.create(path)
@@ -284,6 +287,7 @@ class RepositoryManager(cli.Base):
         
         if len(arguments.options) == 1:
             path = arguments.options[0]
+            path = os.path.abspath(path)
             
             try:
                 Repository.delete(path)
@@ -299,6 +303,7 @@ class RepositoryManager(cli.Base):
         
         if len(arguments.options) == 1:
             path = arguments.options[0]
+            path = os.path.abspath(path)
             
             try:
                 Repository.disable(path)
@@ -314,6 +319,7 @@ class RepositoryManager(cli.Base):
         
         if len(arguments.options) == 1:
             path = arguments.options[0]
+            path = os.path.abspath(path)
             
             try:
                 Repository.enable(path)
