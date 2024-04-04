@@ -86,7 +86,7 @@ class ModuleManager(cli.Base):
         with a choice.
         """
         
-        repositories = Repository.all()
+        repositories = list(Repository.all())
         
         if len(repositories) == 1:
             return repositories[0]
@@ -101,7 +101,7 @@ class ModuleManager(cli.Base):
                         
                         print("Initialised repository at %s.\n" % path)
                         
-                        return Repository.all()[0]
+                        return list(Repository.all())[0]
                     except NotEmptyException:
                         print("The target (%s) already exists.\n" % path)
                 
