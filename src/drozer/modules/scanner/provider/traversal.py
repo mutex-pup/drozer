@@ -52,14 +52,7 @@ class Traversal(Module, common.FileSystem, common.PackageManager, common.Provide
         try:
             data = self.contentResolver().read(uri + "/../../../../../../../../../../../../../../../../etc/hosts")
         except ReflectionException as e:
-            if "java.io.FileNotFoundException" in str(e) or \
-                "java.lang.IllegalArgumentException" in str(e) or \
-                "java.lang.SecurityException" in str(e) or \
-                "No content provider" in str(e) or \
-                "RuntimeException" in str(e):
-                data = ""
-            else:
-                raise
+            data = ""
     
         if data != None and len(data) > 0:
             vulnerable.add(uri)
