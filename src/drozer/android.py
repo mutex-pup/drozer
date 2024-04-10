@@ -1,3 +1,5 @@
+import re;
+import base64;
 
 permissions = [     'android.permission.ACCESS_CHECKIN_PROPERTIES',
                     'android.permission.ACCESS_COARSE_LOCATION',
@@ -429,7 +431,19 @@ optional arguments:
                     extras.putShort(extra[1], context.arg(int(extra[2]), obj_type="short"))
                 elif extra[0] == "bytearray":
                     wrapper = context.new("java.io.ByteArrayOutputStream")
-                    for i in map(ord,extra[2]):
+                    if isinstance(extra[2], str):
+                        #Allow the user to supply b64 or hex by wrapping
+                        #stuff in base64() or hex()
+                        b64_extra = re.match(r"^base64\(([-a-z0-9+\/]+=*)\)$", extra[2], flags=re.IGNORECASE)
+                        hex_extra = re.match(r"^hex\(([a-z0-9]+)\)$", extra[2], flags=re.IGNORECASE)
+                        if b64_extra != None:
+                            extra[2] = base64.b64decode(b64_extra.group(1))
+                        elif hex_extra != None:
+                            extra[2] = bytes.fromhex(hex_extra.group(1))
+                        # otherwise it's just a utf8 string
+                        else:
+                            extra[2] = extra[2].encode('utf-8')
+                    for i in extra[2]:
                         wrapper.write(i)
                     extras.putByteArray(extra[1],wrapper.toByteArray())
                 elif extra[0] == "string":
