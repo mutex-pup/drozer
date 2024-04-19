@@ -46,7 +46,7 @@ sudo pip install drozer-<version>.whl
 
 ### Building and Installing (Kali / Debian)
 
-All of thee requirements can be installed via the following command:
+All of the requirements can be installed via the following command:
 
 ```
 sudo apt install python3 python3-pip python3-protobuf python3-openssl \
