@@ -1,8 +1,6 @@
-python
-git
-android-tools
-python-protobuf
-python-pyopenssl
-python-twisted
-python-setuptools
-python-distro
+protobuf>=4.25.2
+pyopenssl>=22.0.0
+twisted>=18.9.0
+service-identity
+distro
+pyyaml

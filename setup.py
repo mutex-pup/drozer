@@ -139,6 +139,11 @@ setuptools.setup(
                     "pysolar": "src/pysolar" },
   package_data = get_package_data(),
   scripts = get_executable_scripts(),
-  install_requires = ["protobuf>=2.6.1","pyopenssl>=16.2", "pyyaml>=3.11"],
+  install_requires = [  "protobuf>=4.25.2",
+                        "pyopenssl>=22.0.0",
+                        "twisted>=18.9.0",
+                        "service-identity",
+                        "distro",
+                        "pyyaml" ],
   data_files = get_install_data(),
   classifiers = [])
