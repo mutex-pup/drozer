@@ -1,4 +1,5 @@
 FROM alpine:3.19.1 as builder
+ADD "https://api.github.com/repos/WithSecureLabs/drozer/commits?per_page=1" latest_commit
 RUN apk add --no-cache \
 		openjdk11-jdk \
 		python3-dev \
@@ -24,11 +25,6 @@ FROM alpine:3.19.1
 RUN --mount=target=/builder,from=builder,source=/drozer apk add --no-cache \
 		openjdk11-jre-headless \
 		python3 \
-		bash \
-		musl-dev \
-		gcc \
-		python3-dev \
-		libffi-dev \
 		py3-openssl \
 		py3-twisted \
 		py3-distro \
@@ -37,10 +33,5 @@ RUN --mount=target=/builder,from=builder,source=/drozer apk add --no-cache \
 		py3-pip && \
 	pip install /builder/dist/drozer*.whl --no-cache-dir --break-system-packages && \
 	apk del --purge --no-cache \
-		py3-pip \
-		gcc \
-		bash \
-		musl-dev \
-		python3-dev \
-		libffi-dev
+		py3-pip
 ENTRYPOINT ["drozer"]
