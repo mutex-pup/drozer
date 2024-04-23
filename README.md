@@ -19,7 +19,7 @@ Currently, the following known issues are present:
 
 ## Docker Container
 
-To help with making sure drozer can be run on all systems, a Docker container was created that has a working build of Drozer.
+To help with making sure drozer can be run on all systems, a Docker container was created that has a working build of drozer.
 
 * The Docker container and basic setup instructions can be found [here](https://hub.docker.com/r/withsecurelabs/drozer).
 * Instructions on building your own Docker container can be found [here](https://github.com/WithSecureLabs/drozer/tree/develop/docker).
