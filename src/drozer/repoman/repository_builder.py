@@ -121,7 +121,7 @@ class SourceFile(Source):
         """
         
         delim = "\"\"\""
-        source = fs.read(self.path)
+        source = fs.read(self.path).decode('utf-8')
         
         if delim in source:
             start_idx = source.index(delim) + len(delim)
