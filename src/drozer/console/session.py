@@ -512,6 +512,7 @@ class Session(cmd.Cmd):
         
           boolean
           byte
+          bytearray
           char
           double
           float
@@ -526,13 +527,19 @@ class Session(cmd.Cmd):
           Website URIs
           Intents
 
+        Bytearray intent extras can be specified as strings, base64, or hex representations, e.g.:
+
+          --extra bytearray someKey "a very fun string"
+          --extra bytearray someKey base64(c3VwZXIgZnVuIGJhc2U2NCBzdHJpbmc=)
+          --extra bytearray someKey hex(616e2045585452454d454c592066756e2068657820737472696e67)
+
         For Content provider URIs, use the standard 'content://' format of URIs
 
           --extra parcelable yaycontentyay content://settings/secure
 
         For Website URIs, use either 'http://' or 'https://' format of URIs:
 
-          --extra parcelable yaywebsiteyay http://www.f-secure.com
+          --extra parcelable yaywebsiteyay http://www.withsecure.com
 
         For Intents, it uses a slightly modified version of the 'intent://' format of URI:
 
@@ -589,7 +596,7 @@ class Session(cmd.Cmd):
                 if meta.version > latest:
                     print("It seems that you are running a drozer pre-release. Brilliant!\n\nPlease send any bugs, feature requests or other feedback to our Github project:\nhttp://github.com/mwrlabs/drozer.\n\nYour contributions help us to make drozer awesome.\n")
                 elif meta.version < latest:
-                    print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit: https://labs.f-secure.com/tools/drozer/\n" % (latest, latest.date))
+                    print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit: https://labs.withsecure.com/tools/drozer/\n" % (latest, latest.date))
         except Exception as e:
             pass #TODO figure out what this exception is and handle appropriately (exp. IOError)
 
