@@ -123,8 +123,6 @@ If using a real device, the IP address of the device on the network must be spec
 
 `$ drozer console connect --server 192.168.0.10`
 
-### Command Reference
-
 You should be presented with a drozer command prompt:
 
 ```
@@ -132,6 +130,8 @@ selecting f75640f67144d9a3 (unknown sdk 4.1.1)
 dz>
 ```
 The prompt confirms the Android ID of the device you have connected to, along with the manufacturer, model and Android software version.
+
+### Command Reference
 
 | Command        | Description           |
 | ------------- |:-------------|
