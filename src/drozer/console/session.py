@@ -521,17 +521,17 @@ class Session(cmd.Cmd):
           string
           parcelable(sort of)
 
-        When crafting a parcelable intent extra, the following data types are fully supported:
-
-          Content provider URIs
-          Website URIs
-          Intents
-
         Bytearray intent extras can be specified as strings, base64, or hex representations, e.g.:
 
           --extra bytearray someKey "a very fun string"
           --extra bytearray someKey base64(c3VwZXIgZnVuIGJhc2U2NCBzdHJpbmc=)
           --extra bytearray someKey hex(616e2045585452454d454c592066756e2068657820737472696e67)
+
+        When crafting a parcelable intent extra, the following data types are fully supported:
+
+          Content provider URIs
+          Website URIs
+          Intents
 
         For Content provider URIs, use the standard 'content://' format of URIs
 
