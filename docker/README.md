@@ -2,7 +2,7 @@
 
 WithSecure's official Docker image for [drozer](https://labs.withsecure.com/tools/drozer)'s computer client.
 
-drozer allows you to search for security vulnerabilities in apps and devices by assuming the role of an app and interacting with the Dalvik VM, other apps' IPC endpoints and the underlying OS. Its primary use case is simulating a rogue application on the device. A penetration tester does not have to develop an app with custom code to interface with a specific content provider. Instead, drozer can be used with little to no programming experience required to show the impact of letting certain components be exported on a device.
+drozer allows you to search for security vulnerabilities in apps and devices by assuming the role of an app and interacting with the Android Runtime, other apps' IPC endpoints and the underlying OS. Its primary use case is simulating a rogue application on the device. A penetration tester does not have to develop an app with custom code to interface with a specific content provider. Instead, drozer can be used with little to no programming experience required to show the impact of letting certain components be exported on a device.
 
 This is a Docker image that uses OpenJDK 11 to compile and run the drozer computer agent. The `alpine:3.19.1` Docker image is used for both the build stage and the final image.
 
