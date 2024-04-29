@@ -58,6 +58,7 @@ class ModuleLoader(object):
                     pass
                 except Exception as e:
                     sys.stderr.write("Skipping source file at {0}. {1}.\n".format(modules[i], type(e).__name__))
+                    sys.stderr.write("%s\n"%traceback.format_exc())
                     pass
 
     def __load(self, base):

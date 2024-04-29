@@ -1,5 +1,6 @@
 from drozer.modules import common, Module
 import xml.etree.ElementTree as ET
+import sys
 
 class Browsable(Module, common.PackageManager, common.Assets):
     name = "Get all BROWSABLE activities that can be invoked from the web browser"
@@ -48,6 +49,7 @@ Package: com.android.mms
     def add_arguments(self, parser):
         parser.add_argument("-a", "--package", help="specify a package to search")
         parser.add_argument("-f", "--filter", action="store", dest="filter", default=None, help="filter term")
+        parser.add_argument("--debug", action="store_true", default=False, help="enable debug mode")
 
     def execute(self, arguments):
 
@@ -80,6 +82,9 @@ Package: com.android.mms
                             self.stdout.write("    %s\n" % str(i))
                         self.stdout.write("\n")
             except Exception as e:
+                if(arguments.debug):
+                    sys.stderr.write("exception in: {}: {}\n".format(e.__class__.__name__, str(e)))
+                    sys.stderr.write("%s\n"%traceback.format_exc())
                 pass # amazing error checking
             
     # Get browsable activities that use data attribute

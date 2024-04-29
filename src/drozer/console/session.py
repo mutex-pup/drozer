@@ -403,9 +403,6 @@ class Session(cmd.Cmd):
             except KeyboardInterrupt:
                 self.stderr.write("\nCaught SIGINT. Interrupt again to terminate you session.\n")
             except Exception as e:
-                # yaynoteyay
-                # commenting out because `self.handleException(e)` does the same thing anyway
-                #print(f"Exception occured: {e}")
                 self.handleException(e)
             
             while self.__module_pushed_completers > 0:
@@ -598,7 +595,9 @@ class Session(cmd.Cmd):
                 elif meta.version < latest:
                     print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit: https://labs.withsecure.com/tools/drozer/\n" % (latest, latest.date))
         except Exception as e:
-            pass #TODO figure out what this exception is and handle appropriately (exp. IOError)
+            #silence this exception unless in debug mode
+            self.handleException(e, shutup=True)
+            pass
 
     def sendAndReceive(self, message):
         """
@@ -841,9 +840,9 @@ class DebugSession(Session):
         
         self.stdout.write("Done.\n\n")
 
-    def handleException(self, e):
+    def handleException(self, e, shutup=False):
         """
-        Invoked whenever an exception is triggered by a module, to handle the
+        Invoked whenever an exception is triggered, to handle the
         throwable and display some information to the user.
         """
         self.stderr.write("exception in module: {}: {}\n".format(e.__class__.__name__, str(e)))
