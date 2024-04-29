@@ -1,6 +1,7 @@
 import getpass
 import sys
 import warnings
+import traceback
 
 from pysolar.api.protobuf_pb2 import Message
 from pysolar.api.transport.exceptions import ConnectionError

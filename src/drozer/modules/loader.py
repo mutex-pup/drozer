@@ -1,6 +1,7 @@
 import os
 import sys
 import importlib
+import traceback
 
 from drozer.modules.import_conflict_resolver import ImportConflictResolver
 from drozer.repoman import Repository
