@@ -1,6 +1,7 @@
 from drozer.modules import common, Module
 import xml.etree.ElementTree as ET
 import sys
+import traceback
 
 class Browsable(Module, common.PackageManager, common.Assets):
     name = "Get all BROWSABLE activities that can be invoked from the web browser"
