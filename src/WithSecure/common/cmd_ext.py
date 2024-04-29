@@ -98,7 +98,8 @@ class Cmd(cmd.Cmd):
                         raise
             self.postloop()
         except Exception as e:
-            print(f"Loop exception {e}")
+            print("Loop exception")
+            self.handleException(e)
             pass
 
         finally:
@@ -233,11 +234,12 @@ class Cmd(cmd.Cmd):
 
         pass
 
-    def handleException(self, e):
+    def handleException(self, e, shutup=False):
         """
         Default exception handler, writes the message to stderr.
         """
-
+        if(shutup):
+            return
         self.stderr.write("Exception occured: %s\n" % str(e))
 
     def postcmd(self, stop, line):

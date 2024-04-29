@@ -1,6 +1,7 @@
 import getpass
 import sys
 import warnings
+import traceback
 
 from pysolar.api.protobuf_pb2 import Message
 from pysolar.api.transport.exceptions import ConnectionError
@@ -73,7 +74,14 @@ class Console(cli.Base):
             except KeyboardInterrupt:
                 print("Caught SIGINT, terminating your session.")
             except Exception as e:
-                print(f"Caught Exception {e}")
+                # session might not exist here, so let's accept some code duplication
+                if session is not None:
+                    session.handleException(e)
+                elif(arguments.debug):
+                    sys.stderr.write("exception in: {}: {}\n".format(e.__class__.__name__, str(e)))
+                    sys.stderr.write("%s\n"%traceback.format_exc())
+                else:
+                    sys.stderr.write("Exception occured: %s\n" % str(e))
             finally:
                 session.do_exit("")
                 
