@@ -1,6 +1,5 @@
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError, URLError
-from xml.etree import ElementTree
 
 class Version:
 
@@ -51,10 +50,10 @@ drozer is open source software, maintained by MWR InfoSecurity, and can be downl
 
 def latest_version():
     try:
-        xml = urlopen(Request("https://www.withsecure.com/products/drozer/community-edition/manifest.xml", None, {"user-agent": "drozer: %s" % version}), None, 1).read()
-        doc = ElementTree.fromstring(xml)
-        
-        return max(map(lambda n: Version(n.text[1:], n.attrib['release_date']), doc.findall('version')))
+        response = urlopen(Request("https://api.github.com/repos/WithSecureLabs/drozer/releases/latest", None, {"user-agent": "drozer: %s" % str(version)}), None, 1)
+        latestTag = json.load(response)
+        latestVersion = Version(latestTag["tag_name"], latestTag["created_at"][:10])
+        return latestVersion
     except HTTPError:
         return None
     except URLError:
