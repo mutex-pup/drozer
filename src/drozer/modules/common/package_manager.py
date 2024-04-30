@@ -27,7 +27,7 @@ class PackageManager(object):
     class NoSuchPackageException(ReflectionException):
         
         def __str__(self):
-            return "could not find the package: %s" % self.message
+            return "could not find the package: %s" % self.args[0]
 
     class PackageManagerProxy(object):
         """
@@ -61,7 +61,7 @@ class PackageManager(object):
             try:
                 return self.__package_manager.getPackageInfo(package, flags)
             except ReflectionException as e:
-                if e.message == package:
+                if str(e) == package:
                     raise PackageManager.NoSuchPackageException(package)
                 else:
                     raise
@@ -83,7 +83,7 @@ class PackageManager(object):
                 pkg = self.__package_manager.getApplicationInfo(package, flags)
                 return self.__package_manager.getApplicationLabel(pkg)
             except ReflectionException as e:
-                if e.message == package:
+                if str(e) == package:
                     raise PackageManager.NoSuchPackageException(package)
                 else:
                     raise
