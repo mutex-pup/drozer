@@ -276,12 +276,12 @@ class Cmd(cmd.Cmd):
 
     def checkVer(self):
         try:
-            latest = meta.latest_version()
+            latest, date = meta.latest_version()
             if latest is not None:
                 if meta.version > latest:
                     print("It seems that you are running a drozer pre-release. Brilliant!\n\nPlease send any bugs, feature requests or other feedback to our GitHub project:\nhttps://github.com/WithSecureLabs/drozer\n\nYour contributions help us to make drozer awesome.\n")
                 elif meta.version < latest:
-                    print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit:\nhttps://github.com/WithSecureLabs/drozer/releases\n" % (latest, latest.date))
+                    print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit:\nhttps://github.com/WithSecureLabs/drozer/releases\n" % (latest, date))
         except Exception as e:
             #silence this exception unless in debug mode
             self.handleException(e, shutup=True)

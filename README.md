@@ -10,12 +10,11 @@ drozer is open source software, maintained by WithSecure, and can be downloaded 
 
 ## NOTE
 
-This is an BETA release of a rewritten drozer version, this version is updated to support python3.
+This is an BETA release of a rewritten drozer version; this version is updated to support python3.
 
 Currently, the following known issues are present:
 
 - Building of custom agents functionality will crash the drozer client. This functionality is considered out of scope for the beta release of the revived drozer project.
-- It is not possible to run drozer on a Windows host; you must run drozer on either a virtual machine or Docker image
 
 ## Docker Container
 
@@ -30,66 +29,54 @@ To help with making sure drozer can be run on all systems, a Docker container wa
 
 1. [Python3.8](https://www.python.org/downloads/)
 2. [Protobuf](https://pypi.python.org/pypi/protobuf) 4.25.2 or greater
-3. [Pyopenssl](https://pypi.python.org/pypi/pyOpenSSL) 22.0.0 or greater 
+3. [Pyopenssl](https://pypi.python.org/pypi/pyOpenSSL) 22.0.0 or greater
 4. [Twisted](https://pypi.python.org/pypi/Twisted) 18.9.0 or greater
 4. [Distro](https://pypi.org/project/distro/) 1.8.0 or greater
 5. [Java Development Kit](https://adoptopenjdk.net/releases.html) 11 or greater
 
+### Installing
 
-### Installing (Kali / Debian)
+You can use `pip` or `pipx` (preferably, if available) to install the latest release of drozer from our [releases](https://github.com/WithSecureLabs/drozer/releases/tag/latest):
 
-You can use `pip` to install the latest release of drozer:
-
-```
-sudo pip install drozer-<version>.whl
-```
-
-### Building and Installing (Kali / Debian)
-
-All of the requirements can be installed via the following command:
-
-```
-sudo apt install python3 python3-pip python3-protobuf python3-openssl \
-python3-twisted python3-yaml python3-distro git protobuf-compiler \
-libexpat1 libexpat1-dev libpython3-dev python-is-python3 zip default-jdk
+```shell
+pipx install ./drozer-*.whl
 ```
 
-Then build drozer for Python wheel
-
+If you haven't already, consider running:
+```shell
+pipx ensurepath
 ```
+
+to ensure `pipx`-installed packages appear in your `PATH`
+
+## Building
+
+To build drozer from source you can run.
+
+```shell
 git clone https://github.com/WithSecureLabs/drozer.git
 cd drozer
-python setup.py bdist_wheel
-```
-Finally, install drozer
-
-```
-sudo pip install dist/drozer-<version>-py3-none-any.whl
+pip install .
 ```
 
+To build the Android native components against a specific SDK you can set the `ANDROID_SDK` environment variable to the path. For example:
 
-### Building and Installing (Arch Linux/BlackArch)
-
-On any arch based installation, until proper pkgbuilds and pip packages are created, please use an [virtualenv](https://wiki.archlinux.org/title/Python/Virtual_environment).
-
-```
-git clone https://github.com/WithSecureLabs/drozer.git
-cd drozer
-virtualenv -p /usr/bin/python3 venv
-source venv/bin/activate
-python setup.py bdist_wheel
-sudo pip install dist/drozer-<version>-py3-none-any.whl
+**Linux/macOS:**
+```shell
+export ANDROID_SDK=/home/drozerUser/Android/Sdk/platforms/android-34/android.jar
 ```
 
-### Protobuf errors
-
-If protobuf complains about the protobuf defintions being out of date. Copy the protobuf definition from [here](https://github.com/WithSecureLabs/mercury-common/tree/48e81d5ae65ec38dbe1e4bfe09548203dcf13384) into common/protobuf.proto
-
-Then run 
+**Windows - PowerShell:**
+```powershell
+New-Item -Path Env:\ANDROID_SDK -Value 'C:\Users\drozerUser\AppData\Local\Android\sdk\platforms\android-34\android.jar'
 ```
-cd common
-protoc --python_out=../src/pysolar/api/ protobuf.proto
+
+**Windows - cmd:**
+```cmd
+set ANDROID_SDK = "C:\Users\drozerUser\AppData\Local\Android\sdk\platforms\android-34\android.jar"
 ```
+
+ The location of the `d8` tool used can also be changed by setting `D8`.
 
 ## Usage
 
@@ -99,7 +86,9 @@ drozer can be installed using Android Debug Bridge (adb).
 
 Download the latest drozer Agent [here](https://github.com/WithSecureLabs/drozer-agent/releases/latest).
 
-`$ adb install drozer-agent.apk`
+```shell
+adb install drozer-agent.apk
+```
 
 ### Setup for session
 
@@ -109,7 +98,9 @@ We will use the server embedded in the drozer Agent to do this.
 
 You need to set up a suitable port forward so that your PC can connect to a TCP socket opened by the Agent inside the device or emulator. By default, drozer uses port 31415:
 
-`$ adb forward tcp:31415 tcp:31415`
+```shell
+adb forward tcp:31415 tcp:31415`
+```
 
 Now, launch the Agent, select the "Embedded Server" option and tap "Enable" to start the server. You should see a notification that the server has started.
 
@@ -117,11 +108,15 @@ Now, launch the Agent, select the "Embedded Server" option and tap "Enable" to s
 
 On your PC, connect using the drozer Console:
 
-`$ drozer console connect`
+```shell
+drozer console connect
+```
 
 If using a real device, the IP address of the device on the network must be specified:
 
-`$ drozer console connect --server 192.168.0.10`
+```shell
+drozer console connect --server 192.168.0.10
+```
 
 You should be presented with a drozer command prompt:
 
