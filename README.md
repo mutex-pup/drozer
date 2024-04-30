@@ -61,12 +61,12 @@ export ANDROID_SDK=/opt/Android/Sdk/platforms/android-34/android.jar
 
 **Windows - PowerShell:**
 ```powershell
-New-Item -Path Env:\ANDROID_SDK -Value 'C:\Users\milos\AppData\Local\Android\sdk\platforms\android-34\android.jar'
+New-Item -Path Env:\ANDROID_SDK -Value 'C:\Users\drozerUser\AppData\Local\Android\sdk\platforms\android-34\android.jar'
 ```
 
 **Windows - cmd:**
 ```cmd
-set ANDROID_SDK = "C:\Users\milos\AppData\Local\Android\sdk\platforms\android-34\android.jar"
+set ANDROID_SDK = "C:\Users\drozerUser\AppData\Local\Android\sdk\platforms\android-34\android.jar"
 ```
 
 ## Usage
