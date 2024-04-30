@@ -5,6 +5,7 @@ import traceback
 
 from pysolar.api.protobuf_pb2 import Message
 from pysolar.api.transport.exceptions import ConnectionError
+from pysolar.reflection import ReflectionException
 
 from WithSecure.common import cli, path_completion
 
@@ -73,21 +74,31 @@ class Console(cli.Base):
                     session.cmdloop()
             except KeyboardInterrupt:
                 print("Caught SIGINT, terminating your session.")
+            except ReflectionException as e:
+                if("cannot resolve com.WithSecure.dz.Agent" in str(e)):
+                    sys.stderr.write("It seems that you are running an unsupported version of drozer-agent. Please update your copy.\n\nTo download the latest drozer-agent visit:\nhttps://github.com/WithSecureLabs/drozer-agent/releases\n")
+                if(arguments.debug):
+                    self.handleException(e, arguments, session)
             except Exception as e:
-                # session might not exist here, so let's accept some code duplication
-                if session is not None:
-                    session.handleException(e)
-                elif(arguments.debug):
-                    sys.stderr.write("exception in: {}: {}\n".format(e.__class__.__name__, str(e)))
-                    sys.stderr.write("%s\n"%traceback.format_exc())
-                else:
-                    sys.stderr.write("Exception occured: %s\n" % str(e))
+                self.handleException(e, arguments, session)
             finally:
-                session.do_exit("")
+                if session is not None:
+                    session.do_exit("")
+                return
                 
             self.__getServerConnector(arguments).close()
         else:
             self.handle_error(RuntimeError(response.system_response.error_message), fatal=True)
+
+    def handleException(self, e, arguments=None, session=None):
+        # session might not exist here, so let's accept some code duplication
+        if session is not None:
+            session.handleException(e)
+        elif(arguments.debug):
+            sys.stderr.write("exception in: {}: {}\n".format(e.__class__.__name__, str(e)))
+            sys.stderr.write("%s\n"%traceback.format_exc())
+        else:
+            sys.stderr.write("Exception occured: %s\n" % str(e))
 
     def do_devices(self, arguments):
         """lists all devices bound to the drozer server"""
