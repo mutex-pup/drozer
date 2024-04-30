@@ -587,17 +587,6 @@ class Session(cmd.Cmd):
 
         if(self.__onecmd):
             return
-        try:
-            latest = meta.latest_version()
-            if latest != None:
-                if meta.version > latest:
-                    print("It seems that you are running a drozer pre-release. Brilliant!\n\nPlease send any bugs, feature requests or other feedback to our Github project:\nhttp://github.com/mwrlabs/drozer.\n\nYour contributions help us to make drozer awesome.\n")
-                elif meta.version < latest:
-                    print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit: https://labs.withsecure.com/tools/drozer/\n" % (latest, latest.date))
-        except Exception as e:
-            #silence this exception unless in debug mode
-            self.handleException(e, shutup=True)
-            pass
 
     def sendAndReceive(self, message):
         """
