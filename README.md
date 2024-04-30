@@ -10,12 +10,11 @@ drozer is open source software, maintained by WithSecure, and can be downloaded 
 
 ## NOTE
 
-This is an BETA release of a rewritten drozer version, this version is updated to support python3.
+This is an BETA release of a rewritten drozer version; this version is updated to support python3.
 
 Currently, the following known issues are present:
 
 - Building of custom agents functionality will crash the drozer client. This functionality is considered out of scope for the beta release of the revived drozer project.
-- It is not possible to run drozer on a Windows host; you must run drozer on either a virtual machine or Docker image
 
 ## Docker Container
 
@@ -53,24 +52,21 @@ cd drozer
 python -m pip install .
 ```
 
-To build the Android native components against a specific SDK you can set the `ANDROID_SDK` environment variable to the path.
+To build the Android native components against a specific SDK you can set the `ANDROID_SDK` environment variable to the path. For example:
 
+**Linux/macOS:**
 ```shell
 export ANDROID_SDK=/opt/Android/Sdk/platforms/android-34/android.jar
-python -m pip install .
 ```
 
-### Protobuf errors
-
-If protobuf complains about the protobuf defintions being out of date. Copy the protobuf definition
-from [here](https://github.com/WithSecureLabs/mercury-common/tree/48e81d5ae65ec38dbe1e4bfe09548203dcf13384) into
-common/protobuf.proto
-
-Then run
-
+**Windows - PowerShell:**
+```powershell
+New-Item -Path Env:\ANDROID_SDK -Value 'C:\Users\milos\AppData\Local\Android\sdk\platforms\android-34\android.jar'
 ```
-cd common
-protoc --python_out=../src/pysolar/api/ protobuf.proto
+
+**Windows - cmd:**
+```cmd
+set ANDROID_SDK = "C:\Users\milos\AppData\Local\Android\sdk\platforms\android-34\android.jar"
 ```
 
 ## Usage
