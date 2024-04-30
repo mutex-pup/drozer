@@ -36,7 +36,7 @@ To help with making sure drozer can be run on all systems, a Docker container wa
 
 ### Installing
 
-You can use `pip` or `pipx` to install the latest release of drozer from our [releases](https://github.com/WithSecureLabs/drozer/releases/tag/latest):
+You can use `pip` or `pipx` (preferably, if available) to install the latest release of drozer from our [releases](https://github.com/WithSecureLabs/drozer/releases/tag/latest):
 
 ```shell
 pipx install ./drozer-<version>.whl
@@ -49,7 +49,7 @@ To build drozer from source you can run.
 ```shell
 git clone https://github.com/WithSecureLabs/drozer.git
 cd drozer
-python -m pip install .
+pip install .
 ```
 
 To build the Android native components against a specific SDK you can set the `ANDROID_SDK` environment variable to the path. For example:
@@ -77,7 +77,9 @@ drozer can be installed using Android Debug Bridge (adb).
 
 Download the latest drozer Agent [here](https://github.com/WithSecureLabs/drozer-agent/releases/latest).
 
-`$ adb install drozer-agent.apk`
+```shell
+adb install drozer-agent.apk
+```
 
 ### Setup for session
 
@@ -87,7 +89,9 @@ We will use the server embedded in the drozer Agent to do this.
 
 You need to set up a suitable port forward so that your PC can connect to a TCP socket opened by the Agent inside the device or emulator. By default, drozer uses port 31415:
 
-`$ adb forward tcp:31415 tcp:31415`
+```shell
+adb forward tcp:31415 tcp:31415`
+```
 
 Now, launch the Agent, select the "Embedded Server" option and tap "Enable" to start the server. You should see a notification that the server has started.
 
@@ -95,11 +99,15 @@ Now, launch the Agent, select the "Embedded Server" option and tap "Enable" to s
 
 On your PC, connect using the drozer Console:
 
-`$ drozer console connect`
+```shell
+drozer console connect
+```
 
 If using a real device, the IP address of the device on the network must be specified:
 
-`$ drozer console connect --server 192.168.0.10`
+```shell
+drozer console connect --server 192.168.0.10
+```
 
 You should be presented with a drozer command prompt:
 
