@@ -1,6 +1,7 @@
 import cmd
 import os
 from platform import platform
+from drozer import meta
 
 # readline works on linux/mac
 # pyreadline3 works on windows
@@ -98,7 +99,8 @@ class Cmd(cmd.Cmd):
                         raise
             self.postloop()
         except Exception as e:
-            print(f"Loop exception {e}")
+            print("Loop exception")
+            self.handleException(e)
             pass
 
         finally:
@@ -233,11 +235,12 @@ class Cmd(cmd.Cmd):
 
         pass
 
-    def handleException(self, e):
+    def handleException(self, e, shutup=False):
         """
         Default exception handler, writes the message to stderr.
         """
-
+        if(shutup):
+            return
         self.stderr.write("Exception occured: %s\n" % str(e))
 
     def postcmd(self, stop, line):
@@ -271,9 +274,23 @@ class Cmd(cmd.Cmd):
 
         return line
 
+    def checkVer(self):
+        try:
+            latest = meta.latest_version()
+            if latest is not None:
+                if meta.version > latest:
+                    print("It seems that you are running a drozer pre-release. Brilliant!\n\nPlease send any bugs, feature requests or other feedback to our GitHub project:\nhttps://github.com/WithSecureLabs/drozer\n\nYour contributions help us to make drozer awesome.\n")
+                elif meta.version < latest:
+                    print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit:\nhttps://github.com/WithSecureLabs/drozer/releases\n" % (latest, latest.date))
+        except Exception as e:
+            #silence this exception unless in debug mode
+            self.handleException(e, shutup=True)
+            pass
+
     def preloop(self):
         if self.intro:
             self.stdout.write(str(self.intro) + "\n")
+        self.checkVer()
 
     def push_completer(self, completer, history_file=None):
         if has_readline:
