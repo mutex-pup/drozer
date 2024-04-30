@@ -15,23 +15,27 @@ Commands = {'agent': 'create custom drozer Agents',
             'server': 'start a drozer Server',
             'ssl': 'manage drozer SSL key material'}
 
+USAGE = """
+usage: drozer [COMMAND]
+
+Run `drozer [COMMAND] --help` for more usage information.
+
+Commands:
+"""
 
 def print_usage():
-    print("usage: drozer [COMMAND]")
-    print("")
-    print("Run `drozer [COMMAND] --help` for more usage information.")
-    print("")
-    print("Commands:")
+    print(USAGE)
     for command in Commands:
         print("  %15s  %s" % (command, Commands[command]))
     print("")
 
 
-if len(sys.argv) > 1:
-    if sys.argv[1] in Commands:
-        __import__("drozer.cli.%s" % (sys.argv[1]))
+def main():
+    if len(sys.argv) > 1:
+        if sys.argv[1] in Commands:
+            __import__("drozer.cli.%s" % (sys.argv[1]))
+        else:
+            print("unknown command:", sys.argv[1])
+            print_usage()
     else:
-        print("unknown command:", sys.argv[1])
         print_usage()
-else:
-    print_usage()
