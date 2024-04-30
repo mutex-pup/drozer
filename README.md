@@ -39,7 +39,7 @@ To help with making sure drozer can be run on all systems, a Docker container wa
 You can use `pip` or `pipx` (preferably, if available) to install the latest release of drozer from our [releases](https://github.com/WithSecureLabs/drozer/releases/tag/latest):
 
 ```shell
-pipx install ./drozer-<version>.whl
+pipx install ./drozer-*.whl
 ```
 
 ## Building
@@ -56,7 +56,7 @@ To build the Android native components against a specific SDK you can set the `A
 
 **Linux/macOS:**
 ```shell
-export ANDROID_SDK=/opt/Android/Sdk/platforms/android-34/android.jar
+export ANDROID_SDK=/home/drozerUser/Android/Sdk/platforms/android-34/android.jar
 ```
 
 **Windows - PowerShell:**
@@ -68,6 +68,8 @@ New-Item -Path Env:\ANDROID_SDK -Value 'C:\Users\drozerUser\AppData\Local\Androi
 ```cmd
 set ANDROID_SDK = "C:\Users\drozerUser\AppData\Local\Android\sdk\platforms\android-34\android.jar"
 ```
+
+ The location of the `d8` tool used can also be changed by setting `D8`.
 
 ## Usage
 
