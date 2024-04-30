@@ -23,6 +23,7 @@ def make_apks():
     if 'ANDROID_SDK' not in os.environ:
         # raise Exception("ANDROID_SDK environment variable not set")
         sdk = os.path.join('src', 'drozer', 'lib', 'android.jar')
+        sdk = os.path.abspath(sdk)
     else:
         sdk = os.environ['ANDROID_SDK']
 
@@ -30,6 +31,7 @@ def make_apks():
         # raise Exception("D8 environment variable not set")
         d8 = os.path.join('src', 'drozer', 'lib', 'd8')
         d8 += '.bat' if sys.platform == 'win32' else ''
+        d8 = os.path.abspath(d8)
     else:
         d8 = os.environ['D8']
 
@@ -67,7 +69,6 @@ def get_package_data():
         for filename in filenames:
             if not fnmatch(filename, "*.class") or fnmatch(filename, "*.pyc"):
                 data[""].append(os.path.join(root, filename)[11:])
-                print(os.path.join(root, filename)[:11])
     return data
 
 
