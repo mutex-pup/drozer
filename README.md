@@ -30,62 +30,44 @@ To help with making sure drozer can be run on all systems, a Docker container wa
 
 1. [Python3.8](https://www.python.org/downloads/)
 2. [Protobuf](https://pypi.python.org/pypi/protobuf) 4.25.2 or greater
-3. [Pyopenssl](https://pypi.python.org/pypi/pyOpenSSL) 22.0.0 or greater 
+3. [Pyopenssl](https://pypi.python.org/pypi/pyOpenSSL) 22.0.0 or greater
 4. [Twisted](https://pypi.python.org/pypi/Twisted) 18.9.0 or greater
 4. [Distro](https://pypi.org/project/distro/) 1.8.0 or greater
 5. [Java Development Kit](https://adoptopenjdk.net/releases.html) 11 or greater
 
+### Installing
 
-### Installing (Kali / Debian)
+You can use `pip` or `pipx` to install the latest release of drozer from our [releases](https://github.com/WithSecureLabs/drozer/releases/tag/latest):
 
-You can use `pip` to install the latest release of drozer:
-
-```
-sudo pip install drozer-<version>.whl
-```
-
-### Building and Installing (Kali / Debian)
-
-All of the requirements can be installed via the following command:
-
-```
-sudo apt install python3 python3-pip python3-protobuf python3-openssl \
-python3-twisted python3-yaml python3-distro git protobuf-compiler \
-libexpat1 libexpat1-dev libpython3-dev python-is-python3 zip default-jdk
+```shell
+pipx install ./drozer-<version>.whl
 ```
 
-Then build drozer for Python wheel
+## Building
 
-```
+To build drozer from source you can run.
+
+```shell
 git clone https://github.com/WithSecureLabs/drozer.git
 cd drozer
-python setup.py bdist_wheel
-```
-Finally, install drozer
-
-```
-sudo pip install dist/drozer-<version>-py3-none-any.whl
+python -m pip install .
 ```
 
+To build the Android native components against a specific SDK you can set the `ANDROID_SDK` environment variable to the path.
 
-### Building and Installing (Arch Linux/BlackArch)
-
-On any arch based installation, until proper pkgbuilds and pip packages are created, please use an [virtualenv](https://wiki.archlinux.org/title/Python/Virtual_environment).
-
-```
-git clone https://github.com/WithSecureLabs/drozer.git
-cd drozer
-virtualenv -p /usr/bin/python3 venv
-source venv/bin/activate
-python setup.py bdist_wheel
-sudo pip install dist/drozer-<version>-py3-none-any.whl
+```shell
+export ANDROID_SDK=/opt/Android/Sdk/platforms/android-34/android.jar
+python -m pip install .
 ```
 
 ### Protobuf errors
 
-If protobuf complains about the protobuf defintions being out of date. Copy the protobuf definition from [here](https://github.com/WithSecureLabs/mercury-common/tree/48e81d5ae65ec38dbe1e4bfe09548203dcf13384) into common/protobuf.proto
+If protobuf complains about the protobuf defintions being out of date. Copy the protobuf definition
+from [here](https://github.com/WithSecureLabs/mercury-common/tree/48e81d5ae65ec38dbe1e4bfe09548203dcf13384) into
+common/protobuf.proto
 
-Then run 
+Then run
+
 ```
 cd common
 protoc --python_out=../src/pysolar/api/ protobuf.proto
