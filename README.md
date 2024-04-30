@@ -42,6 +42,13 @@ You can use `pip` or `pipx` (preferably, if available) to install the latest rel
 pipx install ./drozer-*.whl
 ```
 
+If you haven't already, consider running:
+```shell
+pipx ensurepath
+```
+
+to ensure `pipx`-installed packages appear in your `PATH`
+
 ## Building
 
 To build drozer from source you can run.
