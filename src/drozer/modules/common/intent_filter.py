@@ -24,7 +24,7 @@ class IntentFilter(assets.Assets, loader.ClassLoader):
     def __parse_filter(self, element):
         intent_filter = IntentFilter.Filter()
         
-        for child in element.getchildren():
+        for child in element:
             if child.tag == "action":
                 intent_filter.add_action(child.attrib['name'])
             elif child.tag == "category":
