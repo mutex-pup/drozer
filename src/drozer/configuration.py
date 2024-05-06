@@ -88,7 +88,7 @@ class Configuration(object):
         cls.__ensure_config()
         
         if cls.__config.has_section(section):
-            return map(lambda k: cls.__config.get(section, k), cls.__config.options(section))
+            return list(map(lambda k: cls.__config.get(section, k), cls.__config.options(section)))
         else:
             return []
         

@@ -64,15 +64,6 @@ class Repository(object):
             Configuration.delete('repositories', path)
         else:
             raise UnknownRepository(path)
-        
-    @classmethod
-    def drozer_modules_path(cls):
-        """
-        Returns the DROZER_MODULE_PATH, that was previously stored in an environment
-        variable.
-        """
-        
-        return ":".join(cls.all())
     
     @classmethod
     def enable(cls, path):

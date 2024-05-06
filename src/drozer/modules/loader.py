@@ -108,10 +108,10 @@ class ModuleLoader(object):
     def __module_path(self):
         """
         Calculate the full set of module paths, by combining internal paths with
-        those specified in the DROZER_MODULE_PATH environment variable.
+        user-specified paths from the drozer config file.
         """
 
-        return self.__module_paths + ":" + Repository.drozer_modules_path()
+        return [self.__module_paths] + Repository.all()
         
     def __paths(self):
         """
@@ -124,7 +124,7 @@ class ModuleLoader(object):
 
         paths = []
 
-        for p in self.__module_path().split(":"):
+        for p in self.__module_path():
             path = os.path.abspath(p)
 
             if path not in sys.path:
