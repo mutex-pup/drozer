@@ -108,7 +108,7 @@ drozer console connect --server <phone's IP address>
 
 If you are using the Docker container, the equivalent command would be:
 
-```shell
+```
 docker run --net host -it withsecurelabs/drozer console connect --server <phone's IP address>
 ```
 
