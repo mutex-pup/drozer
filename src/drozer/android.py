@@ -403,140 +403,148 @@ optional arguments:
         if self.data_uri != None:
             uri = context.klass("android.net.Uri")
             intent.setData(uri.parse(self.data_uri))
+            
+    def add_extra_to(self, extra, bundle, context):
+        """
+        Adds one Extra to an Intent/Bundle.
+        """
+        if extra[0] == "boolean":
+            bundle.putBoolean(extra[1], context.arg(extra[2].lower().startswith("t"), obj_type="boolean"))
+        elif extra[0] == "byte":
+            bundle.putByte(extra[1], context.arg(int(extra[2]), obj_type="byte"))
+        elif extra[0] == "char":
+            bundle.putChar(extra[1], context.arg(int(extra[2]), obj_type="char"))
+        elif extra[0] == "double":
+            bundle.putDouble(extra[1], context.arg(float(extra[2]), obj_type="double"))
+        elif extra[0] == "float":
+            bundle.putFloat(extra[1], context.arg(float(extra[2]), obj_type="float"))
+        elif extra[0] == "integer":
+            bundle.putInt(extra[1], context.arg(int(extra[2]), obj_type="int"))
+        elif extra[0] == "long":
+            bundle.putLong(extra[1], context.arg(int(extra[2]), obj_type="long"))
+        elif extra[0] == "short":
+            bundle.putShort(extra[1], context.arg(int(extra[2]), obj_type="short"))
+        elif extra[0] == "bytearray":
+            wrapper = context.new("java.io.ByteArrayOutputStream")
+            if isinstance(extra[2], str):
+                #Allow the user to supply b64 or hex by wrapping
+                #stuff in base64() or hex()
+                b64_extra = re.match(r"^base64\(([-a-z0-9+\/]+=*)\)$", extra[2], flags=re.IGNORECASE)
+                hex_extra = re.match(r"^hex\(([a-z0-9]+)\)$", extra[2], flags=re.IGNORECASE)
+                if b64_extra != None:
+                    extra[2] = base64.b64decode(b64_extra.group(1))
+                elif hex_extra != None:
+                    extra[2] = bytes.fromhex(hex_extra.group(1))
+                # otherwise it's just a utf8 string
+                else:
+                    extra[2] = extra[2].encode('utf-8')
+            for i in extra[2]:
+                wrapper.write(i)
+            bundle.putByteArray(extra[1],wrapper.toByteArray())
+        elif extra[0] == "string":
+            bundle.putString(extra[1], extra[2])
+        elif extra[0] == "bundle":
+            yaybundleyay = context.new("android.os.Bundle")
+            yayUriArryay = extra[2].split(";")
+            yayIntyay = len(yayUriArryay)
+            while yayIntyay != 0:
+                yayKeyyay = yayUriArryay[yayIntyay - 1].split("=")[0]
+                yayValueyay = yayUriArryay[yayIntyay - 1].split("=")[1]
+                if yayKeyyay.startswith("S."):
+                    yaybundleyay.putString(yayKeyyay[2:], context.arg(str(yayValueyay), obj_type="string"))
+                elif yayKeyyay.startswith("B."):
+                    yaybundleyay.putBoolean(yayKeyyay[2:], context.arg(yayValueyay.lower().startswith("t"), obj_type="boolean"))
+                elif yayKeyyay.startswith("b."):
+                    yaybundleyay.putByte(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="byte"))
+                elif yayKeyyay.startswith("c."):
+                    yaybundleyay.putChar(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="char"))
+                elif yayKeyyay.startswith("d."):
+                    yaybundleyay.putDouble(yayKeyyay[2:], context.arg(float(yayValueyay), obj_type="double"))
+                elif yayKeyyay.startswith("i."):
+                    yaybundleyay.putInt(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="int"))
+                elif yayKeyyay.startswith("f."):
+                    yaybundleyay.putFloat(yayKeyyay[2:], context.arg(float(yayValueyay), obj_type="float"))
+                elif yayKeyyay.startswith("l."):
+                    yaybundleyay.putLong(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="long"))
+                elif yayKeyyay.startswith("s."):
+                    yaybundleyay.putShort(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="short"))
+
+                yayIntyay = yayIntyay - 1
+
+            bundle.putBundle(extra[1], yaybundleyay)
+
+        elif extra[0] == "serializable":
+            yaySerializableArryay = extra[2].split(";")
+            yaybundleyay = []
+            yayIntyay = len(yaySerializableArryay)
+            while yayIntyay != 0:
+                if yaySerializableArryay[yayIntyay - 1].startswith("S."):
+                    yaybundleyay.append(str(yaySerializableArryay[yayIntyay - 1][2:]))
+                elif yaySerializableArryay[yayIntyay - 1].startswith("i."):
+                    yaybundleyay.append(int(yaySerializableArryay[yayIntyay - 1][2:]))
+                else:
+                    yaybundleyay.append(yayKeyyay[2:])
+
+                yayIntyay = yayIntyay - 1
+
+            if len(yaybundleyay) == 1:
+                bundle.putSerializable(extra[1], yaybundleyay[0])
+            else:
+                bundle.putSerializable(extra[1], yaybundleyay)
+                
+        elif extra[0] == "parcelablearraylist": # currently only supports URIs
+            yayListyay = context.new("java.util.ArrayList")
+            yayUriClassyay = context.klass("android.net.Uri")
+            yayListyay.add(yayUriClassyay.parse(extra[2]))
+            bundle.putParcelableArrayList("android.intent.extra.STREAM", yayListyay)
+            
+        elif extra[0] == "parcelable":
+
+            yayIntentClassYay = context.klass("android.content.Intent")
+
+            if extra[2].lower().startswith("content://"): # content:// URI
+                yayExtrayay = yayUriClassyay.parse(extra[2])
+                bundle.putParcelable(extra[1], yayExtrayay)
+            if extra[2].lower().startswith("file://"): # file:// URI
+                yayExtrayay = yayUriClassyay.parse(extra[2])
+                bundle.putParcelable(extra[1], yayExtrayay)
+            elif extra[2].lower().startswith("http://"): # http:// URI
+                yayExtrayay = yayUriClassyay.parse(extra[2])
+                bundle.putParcelable(extra[1], yayExtrayay)
+            elif extra[2].lower().startswith("https://"): # https:// uri
+                yayExtrayay = yayUriClassyay.parse(extra[2])
+                bundle.putParcelable(extra[1], yayExtrayay)
+            elif extra[2].lower().startswith("intent://"): # intent:// intent
+                # use internal intent parser to create new intent
+                yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 0)
+                # manually add launchFlags
+                yayUriArryay = extra[2][9:].split("#")[1].split(";")
+                yayUriArryay.remove("Intent")
+                yayUriArryay.remove("end")
+                yayIntyay = len(yayUriArryay)
+                while yayIntyay != 0:
+                    yayKeyyay = yayUriArryay[yayIntyay - 1].split("=")[0]
+                    yayValueyay = yayUriArryay[yayIntyay - 1].split("=")[1]
+                    if yayKeyyay == "launchFlags":
+                        yayParcelableIntentyay.addFlags(context.arg(int(yayValueyay), obj_type="int"))
+                    yayIntyay = yayIntyay - 1
+                # add the new parcelable extraa intent
+                bundle.putParcelable(extra[1], yayParcelableIntentyay)
+        else:
+            bundle.putParcelable(extra[1], yayExtrayay)
+        
 
     def __add_extras_to(self, intent, context):
         """
-        Set the EXTRAS of intent, iff we have a value to set.
+        Set the Extras of intent, iff we have a value to set.
+        If any Extras already exist, clear them.
         """
         
         if self.extras != None:
             extras = context.new("android.os.Bundle")
 
             for extra in self.extras:
-                if extra[0] == "boolean":
-                    extras.putBoolean(extra[1], context.arg(extra[2].lower().startswith("t"), obj_type="boolean"))
-                elif extra[0] == "byte":
-                    extras.putByte(extra[1], context.arg(int(extra[2]), obj_type="byte"))
-                elif extra[0] == "char":
-                    extras.putChar(extra[1], context.arg(int(extra[2]), obj_type="char"))
-                elif extra[0] == "double":
-                    extras.putDouble(extra[1], context.arg(float(extra[2]), obj_type="double"))
-                elif extra[0] == "float":
-                    extras.putFloat(extra[1], context.arg(float(extra[2]), obj_type="float"))
-                elif extra[0] == "integer":
-                    extras.putInt(extra[1], context.arg(int(extra[2]), obj_type="int"))
-                elif extra[0] == "long":
-                    extras.putLong(extra[1], context.arg(int(extra[2]), obj_type="long"))
-                elif extra[0] == "short":
-                    extras.putShort(extra[1], context.arg(int(extra[2]), obj_type="short"))
-                elif extra[0] == "bytearray":
-                    wrapper = context.new("java.io.ByteArrayOutputStream")
-                    if isinstance(extra[2], str):
-                        #Allow the user to supply b64 or hex by wrapping
-                        #stuff in base64() or hex()
-                        b64_extra = re.match(r"^base64\(([-a-z0-9+\/]+=*)\)$", extra[2], flags=re.IGNORECASE)
-                        hex_extra = re.match(r"^hex\(([a-z0-9]+)\)$", extra[2], flags=re.IGNORECASE)
-                        if b64_extra != None:
-                            extra[2] = base64.b64decode(b64_extra.group(1))
-                        elif hex_extra != None:
-                            extra[2] = bytes.fromhex(hex_extra.group(1))
-                        # otherwise it's just a utf8 string
-                        else:
-                            extra[2] = extra[2].encode('utf-8')
-                    for i in extra[2]:
-                        wrapper.write(i)
-                    extras.putByteArray(extra[1],wrapper.toByteArray())
-                elif extra[0] == "string":
-                    extras.putString(extra[1], extra[2])
-                elif extra[0] == "bundle":
-                    yayExtrasyay = context.new("android.os.Bundle")
-                    yayUriArryay = extra[2].split(";")
-                    yayIntyay = len(yayUriArryay)
-                    while yayIntyay != 0:
-                        yayKeyyay = yayUriArryay[yayIntyay - 1].split("=")[0]
-                        yayValueyay = yayUriArryay[yayIntyay - 1].split("=")[1]
-                        if yayKeyyay.startswith("S."):
-                            yayExtrasyay.putString(yayKeyyay[2:], context.arg(str(yayValueyay), obj_type="string"))
-                        elif yayKeyyay.startswith("B."):
-                            yayExtrasyay.putBoolean(yayKeyyay[2:], context.arg(yayValueyay.lower().startswith("t"), obj_type="boolean"))
-                        elif yayKeyyay.startswith("b."):
-                            yayExtrasyay.putByte(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="byte"))
-                        elif yayKeyyay.startswith("c."):
-                            yayExtrasyay.putChar(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="char"))
-                        elif yayKeyyay.startswith("d."):
-                            yayExtrasyay.putDouble(yayKeyyay[2:], context.arg(float(yayValueyay), obj_type="double"))
-                        elif yayKeyyay.startswith("i."):
-                            yayExtrasyay.putInt(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="int"))
-                        elif yayKeyyay.startswith("f."):
-                            yayExtrasyay.putFloat(yayKeyyay[2:], context.arg(float(yayValueyay), obj_type="float"))
-                        elif yayKeyyay.startswith("l."):
-                            yayExtrasyay.putLong(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="long"))
-                        elif yayKeyyay.startswith("s."):
-                            yayExtrasyay.putShort(yayKeyyay[2:], context.arg(int(yayValueyay), obj_type="short"))
-
-                        yayIntyay = yayIntyay - 1
-
-                    extras.putBundle(extra[1], yayExtrasyay)
-
-                elif extra[0] == "serializable":
-                    yaySerializableArryay = extra[2].split(";")
-                    yayExtrasyay = []
-                    yayIntyay = len(yaySerializableArryay)
-                    while yayIntyay != 0:
-                        if yaySerializableArryay[yayIntyay - 1].startswith("S."):
-                            yayExtrasyay.append(str(yaySerializableArryay[yayIntyay - 1][2:]))
-                        elif yaySerializableArryay[yayIntyay - 1].startswith("i."):
-                            yayExtrasyay.append(int(yaySerializableArryay[yayIntyay - 1][2:]))
-                        else:
-                            yayExtrasyay.append(yayKeyyay[2:])
-
-                        yayIntyay = yayIntyay - 1
-
-                    if len(yayExtrasyay) == 1:
-                        extras.putSerializable(extra[1], yayExtrasyay[0])
-                    else:
-                        extras.putSerializable(extra[1], yayExtrasyay)
-                        
-                elif extra[0] == "parcelablearraylist": # currently only supports URIs
-                    yayListyay = context.new("java.util.ArrayList")
-                    yayUriClassyay = context.klass("android.net.Uri")
-                    yayListyay.add(yayUriClassyay.parse(extra[2]))
-                    extras.putParcelableArrayList("android.intent.extra.STREAM", yayListyay)
-                    
-                elif extra[0] == "parcelable":
-
-                    yayIntentClassYay = context.klass("android.content.Intent")
-
-                    if extra[2].lower().startswith("content://"): # content:// URI
-                        yayExtrayay = yayUriClassyay.parse(extra[2])
-                        extras.putParcelable(extra[1], yayExtrayay)
-                    if extra[2].lower().startswith("file://"): # file:// URI
-                        yayExtrayay = yayUriClassyay.parse(extra[2])
-                        extras.putParcelable(extra[1], yayExtrayay)
-                    elif extra[2].lower().startswith("http://"): # http:// URI
-                        yayExtrayay = yayUriClassyay.parse(extra[2])
-                        extras.putParcelable(extra[1], yayExtrayay)
-                    elif extra[2].lower().startswith("https://"): # https:// uri
-                        yayExtrayay = yayUriClassyay.parse(extra[2])
-                        extras.putParcelable(extra[1], yayExtrayay)
-                    elif extra[2].lower().startswith("intent://"): # intent:// intent
-                        # use internal intent parser to create new intent
-                        yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 0)
-                        # manually add launchFlags
-                        yayUriArryay = extra[2][9:].split("#")[1].split(";")
-                        yayUriArryay.remove("Intent")
-                        yayUriArryay.remove("end")
-                        yayIntyay = len(yayUriArryay)
-                        while yayIntyay != 0:
-                            yayKeyyay = yayUriArryay[yayIntyay - 1].split("=")[0]
-                            yayValueyay = yayUriArryay[yayIntyay - 1].split("=")[1]
-                            if yayKeyyay == "launchFlags":
-                                yayParcelableIntentyay.addFlags(context.arg(int(yayValueyay), obj_type="int"))
-                            yayIntyay = yayIntyay - 1
-                        # add the new parcelable extraa intent
-                        extras.putParcelable(extra[1], yayParcelableIntentyay)
-                else:
-                    extras.putParcelable(extra[1], yayExtrayay)
+                self.add_extra_to(extra, extras, context)
 
             intent.putExtras(extras)
             
