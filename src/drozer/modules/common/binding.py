@@ -1,4 +1,5 @@
 from drozer.modules.common import loader
+from drozer.android import Intent
 
 class ServiceBinding(loader.ClassLoader):
     """
@@ -25,25 +26,8 @@ class ServiceBinding(loader.ClassLoader):
         def add_extra(self, extra):
             if self.bundle == None:
                 self.bundle = self.context.new("android.os.Bundle")
-                
-            if extra[0] == "integer":
-                self.bundle.putInt(extra[1], int(extra[2]))
-            elif extra[0] == "short":
-                self.bundle.putShort(extra[1], int(extra[2]))
-            elif extra[0] == "float":
-                self.bundle.putFloat(extra[1], float(extra[2]))
-            elif extra[0] == "double":
-                self.bundle.putDouble(extra[1], float(extra[2]))
-            elif extra[0] == "boolean":
-                self.bundle.putBoolean(extra[1], extra[2] == "true")
-            elif extra[0] == "string":
-                self.bundle.putString(extra[1], extra[2])
-            elif extra[0] == "byte":
-                self.bundle.putByte(extra[1], extra[2])
-            elif extra[0] == "char":
-                self.bundle.putChar(extra[1], extra[2])
-            else:
-                raise TypeError
+            
+            Intent.add_extra_to(self, extra, self.bundle, self.context)
 
         def setBundle(self, bundle):
             self.bundle = bundle
