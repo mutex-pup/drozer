@@ -94,37 +94,68 @@ adb install drozer-agent.apk
 
 You should now have the drozer Console installed on your PC, and the Agent running on your test device. Now, you need to connect the two and you’re ready to start exploring.
 
-We will use the server embedded in the drozer Agent to do this.
+We will use the server embedded in the drozer Agent to do this. First, launch the Agent, select the "Embedded Server" option and tap "Enable" to start the server. You should see a notification that the server has started. 
 
-You need to set up a suitable port forward so that your PC can connect to a TCP socket opened by the Agent inside the device or emulator. By default, drozer uses port 31415:
+Then, follow one of the options below.
 
-```shell
-adb forward tcp:31415 tcp:31415`
+#### Option 1: Connect to the phone via network
+
+By default, the drozer Agent listens for incoming TCP connections on all interfaces on port 31415. In order to connect to the Agent, run the following command:
+
+```
+drozer console connect --server <phone's IP address>
 ```
 
-Now, launch the Agent, select the "Embedded Server" option and tap "Enable" to start the server. You should see a notification that the server has started.
+If you are using the Docker container, the equivalent command would be:
 
-### Start a session - running drozer on host
+```shell
+docker run --net host -it withsecurelabs/drozer console connect --server <phone's IP address>
+```
 
-On your PC, connect using the drozer Console:
+#### Option 2: Connect to the phone via USB
+
+In some scenarios, connecting to the device over the network may not be viable. In these scenarios, we can leverage `adb`'s port-forwarding capabilities to establish a connection over USB.
+
+First, you need to set up a suitable port forward so that your PC can connect to a TCP socket opened by the Agent inside the emulator, or on the device. By default, drozer uses port 31415
+
+```shell
+adb forward tcp:31415 tcp:31415
+```
+
+You can now connect to the drozer Agent by connecting to `localhost` (or simply not specifying the target IP)
 
 ```shell
 drozer console connect
 ```
 
-If using a real device, the IP address of the device on the network must be specified:
-
-```shell
-drozer console connect --server 192.168.0.10
-```
+### Confirming a successful connection
 
 You should be presented with a drozer command prompt:
 
 ```
-selecting f75640f67144d9a3 (unknown sdk 4.1.1)  
+Selecting ebe9fcc0c47b28da (Google sdk_gphone64_x86_64 12)
+
+            ..                    ..:.
+           ..o..                  .r..
+            ..a..  . ....... .  ..nd
+              ro..idsnemesisand..pr
+              .otectorandroidsneme.
+           .,sisandprotectorandroids+.
+         ..nemesisandprotectorandroidsn:.
+        .emesisandprotectorandroidsnemes..
+      ..isandp,..,rotecyayandro,..,idsnem.
+      .isisandp..rotectorandroid..snemisis.
+      ,andprotectorandroidsnemisisandprotec.
+     .torandroidsnemesisandprotectorandroid.
+     .snemisisandprotectorandroidsnemesisan:
+     .dprotectorandroidsnemesisandprotector.
+
+drozer Console (v3.0.0)
 dz>
 ```
 The prompt confirms the Android ID of the device you have connected to, along with the manufacturer, model and Android software version.
+
+You are now ready to start exploring the device.
 
 ### Command Reference
 
