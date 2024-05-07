@@ -93,7 +93,7 @@ class Handler(BaseHTTPRequestHandler):
             provider.pathPermissions != None and True in map(lambda path: self.__eligible_path_permission(permissions, path), provider.pathPermissions)
 
     def __format_exception(self, e):
-        return "<h1>" + str(e.__class__) + "</h1><p>" + e.message + "</p>"
+        return "<h1>" + str(e.__class__) + "</h1><p>" + str(e) + "</p>"
 
     def __provider_list(self, filters=None, permissions=None):
         """
@@ -120,12 +120,19 @@ class Handler(BaseHTTPRequestHandler):
             return link("/?permissions=%s" % url, display or url)
 
         for package in self.module.packageManager().getPackages(common.PackageManager.GET_PROVIDERS):
+            
             if package.providers != None and (filters == None or filters.lower() in package.packageName.lower()):
                 for provider in package.providers:
 
                     if self.__eligible_provider(permissions, provider):
                         # Give the general values first
-                        authorities = provider.authority.split(";")
+
+                        if(not provider.exported):
+                            continue
+                        if(provider.authority != None):
+                            authorities = provider.authority.split(";")
+                        else:
+                            authorities = "null"
                         output += "<tr><td>%s</td>" % linkfilter(provider.packageName)
                         output += "<td colspan='2'>%s</td>" % "<br/>".join([linkcontent(a) for a in authorities])
                         output += "<td>%s</td>" % linkperm(provider.readPermission)
