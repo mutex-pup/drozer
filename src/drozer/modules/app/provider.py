@@ -215,18 +215,18 @@ Finding content providers that do not require permissions to read/write:
 
         if len(exported_providers) > 0 or arguments.unexported and len(providers) > 0:
             self.stdout.write("Package: %s\n" % package.packageName)
-
-            if not arguments.unexported:
-                for provider in exported_providers:
-                    for authority in provider.authority.split(";"):
-                        self.__print_provider(provider, authority, "  ")
-            else:
+            if(arguments.unexported):
                 self.stdout.write("  Exported Providers:\n")
-                for provider in exported_providers:
-                    for authority in provider.authority.split(";"):
-                        self.__print_provider(provider, authority, "    ")
+            for provider in exported_providers:
+                if(provider.authority == None):
+                    provider.authority = "null"
+                for authority in provider.authority.split(";"):
+                    self.__print_provider(provider, authority, "    " if arguments.unexported else "  ") # 2-space indent if we're only printing exported providers, 4 if we're doing both exported and unexported
+            if(arguments.unexported):
                 self.stdout.write("  Hidden Providers:\n")
                 for provider in hidden_providers:
+                    if(provider.authority == None):
+                        provider.authority = "null"
                     for authority in provider.authority.split(";"):
                         self.__print_provider(provider, authority, "    ")
             self.stdout.write("\n")
