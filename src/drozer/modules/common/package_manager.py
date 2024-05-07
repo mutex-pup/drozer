@@ -107,7 +107,7 @@ class PackageManager(object):
             Get all installed packages, as a Java List<>.
             """
 
-            return self.__package_manager.getInstalledPackages(self.__package_manager.GET_META_DATA)
+            return self.__package_manager.getInstalledPackages(flags)
 
         def packageManager(self):
             """
