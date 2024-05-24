@@ -3,6 +3,7 @@ ADD "https://api.github.com/repos/WithSecureLabs/drozer/commits?per_page=1" late
 RUN apk add --no-cache \
 		openjdk11-jdk \
 		python3-dev \
+		git \
 		py3-pip \
 		py3-openssl \
 		py3-twisted \
@@ -19,12 +20,21 @@ RUN apk add --no-cache \
 	cd drozer && \
 	pip install --no-cache-dir --break-system-packages \
 		-r requirements.txt && \
-	python setup.py bdist_wheel
+	pip install --no-cache-dir --break-system-packages\
+	    build && \
+	python -m build
 
 FROM alpine:3.19.1
+ADD "https://api.github.com/repos/WithSecureLabs/drozer/commits?per_page=1" latest_commit
 RUN --mount=target=/builder,from=builder,source=/drozer apk add --no-cache \
 		openjdk11-jre-headless \
 		python3 \
+		bash \
+		musl-dev \
+		gcc \
+		python3-dev \
+		libffi-dev \
+		vim \
 		py3-openssl \
 		py3-twisted \
 		py3-distro \
@@ -33,5 +43,10 @@ RUN --mount=target=/builder,from=builder,source=/drozer apk add --no-cache \
 		py3-pip && \
 	pip install /builder/dist/drozer*.whl --no-cache-dir --break-system-packages && \
 	apk del --purge --no-cache \
-		py3-pip
+		py3-pip \
+		gcc \
+		bash \
+		musl-dev \
+		python3-dev \
+		libffi-dev
 ENTRYPOINT ["drozer"]
