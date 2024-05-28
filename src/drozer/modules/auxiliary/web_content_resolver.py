@@ -60,8 +60,11 @@ class Handler(BaseHTTPRequestHandler):
         params = urllib.parse.parse_qs(url.query)
 
         try:
-            if not path or path[0] == 'list':
-                # if / or /list, produce a list of all known content provider uris
+            if not path:
+                # default behaviour: usage information
+                self.wfile.write(bytes(self.header + self.usage() + self.footer, "utf-8"))
+            elif path[0] == 'list':
+                # if /list, produce a list of all known exported content provider uris
                 output = self.__provider_list(filters=params.get('filter', [None])[0], permissions=params.get('permissions', [None])[0])
 
                 self.wfile.write(bytes(self.header + output + self.footer, "utf-8"))
@@ -93,7 +96,7 @@ class Handler(BaseHTTPRequestHandler):
             provider.pathPermissions != None and True in map(lambda path: self.__eligible_path_permission(permissions, path), provider.pathPermissions)
 
     def __format_exception(self, e):
-        return "<h1>" + str(e.__class__) + "</h1><p>" + e.message + "</p>"
+        return "<h1>" + str(e.__class__) + "</h1><p>" + str(e) + "</p>"
 
     def __provider_list(self, filters=None, permissions=None):
         """
@@ -120,12 +123,19 @@ class Handler(BaseHTTPRequestHandler):
             return link("/?permissions=%s" % url, display or url)
 
         for package in self.module.packageManager().getPackages(common.PackageManager.GET_PROVIDERS):
+            
             if package.providers != None and (filters == None or filters.lower() in package.packageName.lower()):
                 for provider in package.providers:
 
                     if self.__eligible_provider(permissions, provider):
                         # Give the general values first
-                        authorities = provider.authority.split(";")
+
+                        if(not provider.exported):
+                            continue
+                        if(provider.authority != None):
+                            authorities = provider.authority.split(";")
+                        else:
+                            authorities = "null"
                         output += "<tr><td>%s</td>" % linkfilter(provider.packageName)
                         output += "<td colspan='2'>%s</td>" % "<br/>".join([linkcontent(a) for a in authorities])
                         output += "<td>%s</td>" % linkperm(provider.readPermission)
@@ -184,10 +194,10 @@ class Handler(BaseHTTPRequestHandler):
 <h2>Usage instructions:</h2>
 
 <ul>
-<li>To access a list of providers:
-  <a href="http://localhost:%d/list">http://localhost:%s/providers</a></li>
+<li>To access a list of exported providers (<b>n.b.</b>, may take a few minutes):
+  <a href="http://localhost:%d/list">http://localhost:%s/list</a></li>
 
 <li>To access a particular provider:
-  http://localhost:%d/query?uri=<uri>&projection=<projection>&selection=<selection>&selectionArgs=<selectionArgs>&sortOrder=</li>
+  http://localhost:%d/query?uri=<b>&lt;uri&gt;</b>&projection=<b>&lt;projection&gt;</b>&selection=<b>&lt;selection&gt;</b>&selectionArgs=<b>&lt;selectionArgs&gt;</b>&sortOrder=<b>&lt;sortOrder&gt;</b></li>
 </ul>
 """ % (self.server.server_port, self.server.server_port, self.server.server_port)
