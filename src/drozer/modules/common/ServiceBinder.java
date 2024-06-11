@@ -74,31 +74,8 @@ public class ServiceBinder {
         Intent i = new Intent();
         i.setComponent(c);
 
-        // yayshitcodeyay but it works
         // adding intent extras to the intent used to start a bind()
-        // need to figure out a better way to do this
-        for(String key : message.getData().keySet()){
-            Object yayObjectYay = message.getData().get(key);
-            if (yayObjectYay instanceof Integer) {
-                i.putExtra(key, (Integer) yayObjectYay);
-            } else if (yayObjectYay instanceof String) {
-                i.putExtra(key, (String) yayObjectYay);
-            } else if (yayObjectYay instanceof Boolean) {
-                i.putExtra(key, (Boolean) yayObjectYay);
-            } else if (yayObjectYay instanceof Long) {
-                i.putExtra(key, (Long) yayObjectYay);
-            } else if (yayObjectYay instanceof Float) {
-                i.putExtra(key, (Float) yayObjectYay);
-            } else if (yayObjectYay instanceof Double) {
-                i.putExtra(key, (Double) yayObjectYay);
-            } else if (yayObjectYay instanceof Parcelable) {
-                i.putExtra(key, (Parcelable) yayObjectYay);
-            } else if (yayObjectYay instanceof Serializable) {
-                i.putExtra(key, (Serializable) yayObjectYay);
-            } else {
-                throw new IllegalArgumentException("unsupported extra type");
-            }
-        }
+        i.putExtras(message.getData());
         
         if(timeout > -1){
             // bind to the service, and wait for the send/receive to finish
