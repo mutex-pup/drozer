@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
+import java.io.Serializable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Process;
 import android.util.Log;
+import android.os.Parcelable;
 import java.lang.ref.WeakReference;
 
 /* drozer ServiceBinder
@@ -71,6 +73,9 @@ public class ServiceBinder {
 
         Intent i = new Intent();
         i.setComponent(c);
+
+        // adding intent extras to the intent used to start a bind()
+        i.putExtras(message.getData());
         
         if(timeout > -1){
             // bind to the service, and wait for the send/receive to finish
