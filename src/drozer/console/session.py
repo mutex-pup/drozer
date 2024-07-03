@@ -538,9 +538,9 @@ class Session(cmd.Cmd):
 
           --extra parcelable yaywebsiteyay http://www.withsecure.com
 
-        For Intents, it uses a slightly modified version of the 'intent://' format of URI:
+        For Intents, use the 'intent://' format of URI:
 
-          --extra parcelable yayintentyay intent://host.com?queryparameter=value#package=targetPackage;component=targetComponent;action=action;category=category;type=type;identifier=identifier;launchFlags=launchFlags;scheme=scheme;sourceBounds=sourceBounds;S.extraString=value;B.extraBoolean=value;b.extraByte=value;c.extraChar=value;d.extraDouble=value;i.extraInt=value;f.extraFloat=value;l.extraLong=value;s.extraShort=value;
+          --extra parcelable yayintentyay intent://host.com?queryparameter=value#Intent;package=targetPackage;component=targetComponent;action=action;category=category;type=type;identifier=identifier;launchFlags=launchFlags;scheme=scheme;sourceBounds=sourceBounds;S.extraString=value;B.extraBoolean=value;b.extraByte=value;c.extraChar=value;d.extraDouble=value;i.extraInt=value;f.extraFloat=value;l.extraLong=value;s.extraShort=value;end;
         
         """
         
