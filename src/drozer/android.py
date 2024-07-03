@@ -504,7 +504,7 @@ optional arguments:
                     if '#' not in extra[2]:
                         extra[2] += '#Intent;end;'
                     else:
-                        extra[2] = re.sub('#(.*)', '#Intent;\\1;end;', extra[2])
+                        extra[2] = re.sub('#(.*)', '#Intent;\\1end;', extra[2])
 
                 yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 0)
                 bundle.putParcelable(extra[1], yayParcelableIntentyay)
