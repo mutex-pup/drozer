@@ -505,13 +505,8 @@ optional arguments:
                         extra[2] += '#Intent;end;'
                     else:
                         extra[2] = re.sub('#(.*)', '#Intent;\\1end;', extra[2])
-                yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 0)
 
-                # Add launch flags since they are not added by default
-                res = re.findall('launchFlags=([^;]+)', extra[2])
-                if res:
-                    yayParcelableIntentyay.addFlags(context.arg(int(res[0]), obj_type="int"))
-
+                yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 4)  # 4 = URI_ALLOW_UNSAFE for launchFlags
                 bundle.putParcelable(extra[1], yayParcelableIntentyay)
             else:
                 yayUriClassyay = context.klass("android.net.Uri")
