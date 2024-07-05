@@ -504,7 +504,17 @@ optional arguments:
                     if '#' not in extra[2]:
                         extra[2] += '#Intent;end;'
                     else:
-                        extra[2] = re.sub('#(.*)', '#Intent;\\1end;', extra[2])
+                        extra[2] = re.sub('#(.*?);?$', '#Intent;\\1;end;', extra[2])
+
+                if 'component=' in extra[2]:
+                    component = re.findall('component=([^;]*)', extra[2])[0]
+                    if '/' not in component:
+                        if 'package=' not in extra[2]:
+                            raise Exception("Please use 'component=[PACKAGE_NAME]/[COMPONENT_NAME]'")
+                        package = re.findall('package=([^;]*)', extra[2])[0]
+                        if package not in component:
+                            raise Exception("Please use 'component=[PACKAGE_NAME]/[COMPONENT_NAME]'")
+                        extra[2] = extra[2].replace(f'component={package}', f'component={package}/')
 
                 yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 4)  # 4 = URI_ALLOW_UNSAFE for launchFlags
                 bundle.putParcelable(extra[1], yayParcelableIntentyay)
