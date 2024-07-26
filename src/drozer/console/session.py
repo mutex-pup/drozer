@@ -44,6 +44,7 @@ class Session(cmd.Cmd):
         self.history_file = os.path.sep.join([os.path.expanduser("~"), ".drozer_history"])
         self.modules = collection.ModuleCollection(loader.ModuleLoader())
         self.prompt = "dz> "
+        self.agent_id = "com.WithSecure.dz"
         self.reflector = Reflector(self)
         if hasattr(arguments, 'no_color') and not arguments.no_color:
             self.stdout = ColouredStream(self.stdout)
@@ -111,7 +112,7 @@ class Session(cmd.Cmd):
 
     def context(self):
         if self.has_context():
-            return self.reflector.resolve("com.WithSecure.dz.Agent").getContext()
+            return self.reflector.resolve(self.agent_id + ".Agent").getContext()
         else:
             return None
         
@@ -178,7 +179,7 @@ class Session(cmd.Cmd):
         drozer will automatically re-upload any files that it needs as you continue to use it.
         """
 
-        files = clean.clean(self.reflector)
+        files = clean.clean(self)
         
         self.stdout.write("Removed %d cached files.\n" % files)
 
@@ -369,7 +370,7 @@ class Session(cmd.Cmd):
             self.stdout.write("Has ApplicationContext: YES\n")
             self.stdout.write("Available Permissions:\n")
             for permission in sorted(self.permissions()):
-                if permission != "com.WithSecure.dz.permissions.GET_CONTEXT":
+                if permission not in ["GET_CONTEXT", "com.WithSecure.dz.permissions.GET_CONTEXT", "com.mwr.dz.permissions.GET_CONTEXT"]:
                     self.stdout.write(" - %s\n" % (permission))
         else:
             self.stdout.write("Has ApplicationContext: NO\n")
@@ -548,7 +549,7 @@ class Session(cmd.Cmd):
     
     def has_context(self):
         if self.__has_context == None:
-            self.__has_context = not self.reflector.resolve("com.WithSecure.dz.Agent").getContext() == None
+            self.__has_context = not self.reflector.resolve(self.agent_id + ".Agent").getContext() == None
             
         return self.__has_context == True
     
@@ -572,7 +573,9 @@ class Session(cmd.Cmd):
                     if (packageManager.checkPermission(str(permission), packageName) == pm.PERMISSION_GRANTED):
                         self.__permissions.append(str(permission))
             
+            self.__permissions.append("GET_CONTEXT")
             self.__permissions.append("com.WithSecure.dz.permissions.GET_CONTEXT")
+            self.__permissions.append("com.mwr.dz.permissions.GET_CONTEXT")
         elif self.__permissions == None:
             self.__permissions = []
         

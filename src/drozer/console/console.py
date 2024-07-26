@@ -75,7 +75,7 @@ class Console(cli.Base):
             except KeyboardInterrupt:
                 print("Caught SIGINT, terminating your session.")
             except ReflectionException as e:
-                if("cannot resolve com.WithSecure.dz.Agent" in str(e)):
+                if("cannot resolve" in str(e)):
                     sys.stderr.write("It seems that you are running an unsupported version of drozer-agent. Please update your copy.\n\nTo download the latest drozer-agent visit:\nhttps://github.com/WithSecureLabs/drozer-agent/releases\n")
                 if(arguments.debug):
                     self.handleException(e, arguments, session)

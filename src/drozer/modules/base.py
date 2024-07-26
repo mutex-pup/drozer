@@ -36,6 +36,7 @@ class Module(object):
             self.stdout = session.stdout
             self.stderr = session.stderr
             self.variables = session.variables
+            self.session = session # TODO: very cool and normal redundancy that could be ironed out
         
         self.usage = Usage(self)
 
@@ -119,7 +120,7 @@ class Module(object):
         Gets the context of the running Agent application.
         """
 
-        return self.klass('com.WithSecure.dz.Agent').getContext()
+        return self.session.context()
     
     def has_context(self):
         """

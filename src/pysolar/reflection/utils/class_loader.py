@@ -15,7 +15,7 @@ class ClassLoader(object):
     system into the running Dalvik VM, using the reflection API.
     """
     
-    def __init__(self, source_or_relative_path, cache_path, construct, system_class_loader, relative_to=None):
+    def __init__(self, source_or_relative_path, cache_path, construct, system_class_loader, agent_id, relative_to=None):
         self.source_or_relative_path = source_or_relative_path
         
         self.android_path = None
@@ -25,6 +25,7 @@ class ClassLoader(object):
         self.javac_path = None
         self.relative_to=relative_to
         self.system_class_loader = system_class_loader
+        self.agent_id = agent_id
 
     def loadClass(self, klass):
         return self.getClassLoader().loadClass(klass);
@@ -105,7 +106,7 @@ class ClassLoader(object):
         
         remote_hash = ""        
         try:
-            remote_verify = self.construct("com.WithSecure.dz.util.Verify")
+            remote_verify = self.construct(self.agent_id + ".util.Verify")
             remote_hash = remote_verify.md5sum(remote)
         except ReflectionException:
             return True

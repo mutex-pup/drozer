@@ -22,7 +22,7 @@ class ClassLoader(object):
             relative_to = os.path.dirname(relative_to)
         
         if not Module.cached_klass(".".join([source, klass])):
-            loader = utils.ClassLoader(source, self.__get_cache_path(), self.__get_constructor(), self.klass('java.lang.ClassLoader').getSystemClassLoader(), relative_to=relative_to)
+            loader = utils.ClassLoader(source, self.__get_cache_path(), self.__get_constructor(), self.klass('java.lang.ClassLoader').getSystemClassLoader(), self.session.agent_id, relative_to=relative_to)
             loader.android_path = lambda: Configuration.library("android.jar")
             loader.dx_path = lambda: Configuration.executable("d8.bat") if platform.system() == "Windows" else Configuration.executable("d8")
             loader.javac_path = lambda: Configuration.executable("javac")
