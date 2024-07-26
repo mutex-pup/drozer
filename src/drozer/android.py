@@ -476,16 +476,13 @@ optional arguments:
         elif extra[0] == "serializable":
             yaySerializableArryay = extra[2].split(";")
             yaybundleyay = []
-            yayIntyay = len(yaySerializableArryay)
-            while yayIntyay != 0:
-                if yaySerializableArryay[yayIntyay - 1].startswith("S."):
-                    yaybundleyay.append(str(yaySerializableArryay[yayIntyay - 1][2:]))
-                elif yaySerializableArryay[yayIntyay - 1].startswith("i."):
-                    yaybundleyay.append(int(yaySerializableArryay[yayIntyay - 1][2:]))
+            for key in yaySerializableArryay:
+                if key.startswith("S."):
+                    yaybundleyay.append(str(key[2:]))
+                elif key.startswith("i."):
+                    yaybundleyay.append(int(key[2:]))
                 else:
-                    yaybundleyay.append(yayKeyyay[2:])
-
-                yayIntyay = yayIntyay - 1
+                    yaybundleyay.append(key[2:])
 
             if len(yaybundleyay) == 1:
                 bundle.putSerializable(extra[1], yaybundleyay[0])
@@ -499,39 +496,35 @@ optional arguments:
             bundle.putParcelableArrayList("android.intent.extra.STREAM", yayListyay)
             
         elif extra[0] == "parcelable":
+            if extra[2].lower().startswith("intent://"): # intent:// intent
+                yayIntentClassYay = context.klass("android.content.Intent")
 
-            yayIntentClassYay = context.klass("android.content.Intent")
+                # Fix to provide support for the old drozer intent format.
+                if '#Intent' not in extra[2]:
+                    if '#' not in extra[2]:
+                        extra[2] += '#Intent;end;'
+                    else:
+                        extra[2] = re.sub('#(.*?);?$', '#Intent;\\1;end;', extra[2])
 
-            if extra[2].lower().startswith("content://"): # content:// URI
-                yayExtrayay = yayUriClassyay.parse(extra[2])
-                bundle.putParcelable(extra[1], yayExtrayay)
-            if extra[2].lower().startswith("file://"): # file:// URI
-                yayExtrayay = yayUriClassyay.parse(extra[2])
-                bundle.putParcelable(extra[1], yayExtrayay)
-            elif extra[2].lower().startswith("http://"): # http:// URI
-                yayExtrayay = yayUriClassyay.parse(extra[2])
-                bundle.putParcelable(extra[1], yayExtrayay)
-            elif extra[2].lower().startswith("https://"): # https:// uri
-                yayExtrayay = yayUriClassyay.parse(extra[2])
-                bundle.putParcelable(extra[1], yayExtrayay)
-            elif extra[2].lower().startswith("intent://"): # intent:// intent
-                # use internal intent parser to create new intent
-                yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 0)
-                # manually add launchFlags
-                yayUriArryay = extra[2][9:].split("#")[1].split(";")
-                yayUriArryay.remove("Intent")
-                yayUriArryay.remove("end")
-                yayIntyay = len(yayUriArryay)
-                while yayIntyay != 0:
-                    yayKeyyay = yayUriArryay[yayIntyay - 1].split("=")[0]
-                    yayValueyay = yayUriArryay[yayIntyay - 1].split("=")[1]
-                    if yayKeyyay == "launchFlags":
-                        yayParcelableIntentyay.addFlags(context.arg(int(yayValueyay), obj_type="int"))
-                    yayIntyay = yayIntyay - 1
-                # add the new parcelable extraa intent
+                if 'component=' in extra[2]:
+                    component = re.findall('component=([^;]*)', extra[2])[0]
+                    if '/' not in component:
+                        if 'package=' not in extra[2]:
+                            raise Exception("Please use 'component=[PACKAGE_NAME]/[COMPONENT_NAME]'")
+                        package = re.findall('package=([^;]*)', extra[2])[0]
+                        if package not in component:
+                            raise Exception("Please use 'component=[PACKAGE_NAME]/[COMPONENT_NAME]'")
+                        extra[2] = extra[2].replace(f'component={package}', f'component={package}/')
+
+                yayParcelableIntentyay = yayIntentClassYay.parseUri(extra[2], 4)  # 4 = URI_ALLOW_UNSAFE for launchFlags
                 bundle.putParcelable(extra[1], yayParcelableIntentyay)
+            else:
+                yayUriClassyay = context.klass("android.net.Uri")
+                yayExtrayay = yayUriClassyay.parse(extra[2])
+                bundle.putParcelable(extra[1], yayExtrayay)
+
         else:
-            bundle.putParcelable(extra[1], yayExtrayay)
+            bundle.putParcelable(extra[1], extra[2])
         
 
     def __add_extras_to(self, intent, context):
