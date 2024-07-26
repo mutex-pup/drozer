@@ -11,11 +11,12 @@ class Device:
     instance of DeviceCollection.
     """
     
-    def __init__(self, device_id, manufacturer, model, software):
+    def __init__(self, device_id, manufacturer, model, software, bundle='com.WithSecure.dz'):
         self.device_id = device_id
         self.manufacturer = manufacturer
         self.model = model
         self.software = software
+        self.bundle = bundle
         
         self.callbacks = {}
         self.connection = None

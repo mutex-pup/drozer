@@ -179,7 +179,6 @@ class Console(cli.Base):
             print(f"Device with the ID {arguments.device} not found.")
 
         elif len(devices) == 1:
-            print(devices)
             return devices[0]
 
         elif len(devices) == 0:
