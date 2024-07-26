@@ -50,12 +50,18 @@ class Device:
         """
         Build a new Device from a Protocol Buffer representation.
         """
+        if protobuf.bundle:
+            return Device(protobuf.id,
+                protobuf.manufacturer,
+                protobuf.model,
+                protobuf.software,
+                protobuf.bundle)
+        else:
+            return Device(protobuf.id,
+                protobuf.manufacturer,
+                protobuf.model,
+                protobuf.software)
 
-        return Device(protobuf.id,
-            protobuf.manufacturer,
-            protobuf.model,
-            protobuf.software)
-    
     def hasCallback(self, callback_id):
         """
         Determine whether the Device has a callback with a given identifier.

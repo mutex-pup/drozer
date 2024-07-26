@@ -29,7 +29,7 @@ class Session(cmd.Cmd):
     Type `help COMMAND` for more information on a particular command, or `help MODULE` for a particular module.
     """
 
-    def __init__(self, server, session_id, arguments):
+    def __init__(self, server, session_id, arguments, agent_id):
         cmd.Cmd.__init__(self)
         self.__base = ""
         self.__has_context = None
@@ -44,7 +44,7 @@ class Session(cmd.Cmd):
         self.history_file = os.path.sep.join([os.path.expanduser("~"), ".drozer_history"])
         self.modules = collection.ModuleCollection(loader.ModuleLoader())
         self.prompt = "dz> "
-        self.agent_id = "com.WithSecure.dz"
+        self.agent_id = agent_id
         self.reflector = Reflector(self)
         if hasattr(arguments, 'no_color') and not arguments.no_color:
             self.stdout = ColouredStream(self.stdout)
@@ -815,8 +815,8 @@ class DebugSession(Session):
     handlers to print stacktrace information.
     """
 
-    def __init__(self, server, session_id, arguments):
-        Session.__init__(self, server, session_id, arguments)
+    def __init__(self, server, session_id, arguments, agent_id):
+        Session.__init__(self, server, session_id, arguments, agent_id)
 
         self.intro = "drozer Console (v%s debug mode)" % meta.version
         self.prompt = "dz> "

@@ -13,6 +13,7 @@ from drozer import meta
 from drozer.api.formatters import SystemResponseFormatter
 from drozer.connector import ServerConnector
 from drozer.console.session import Session, DebugSession
+from drozer.device import Device
 
 class Console(cli.Base):
     """
@@ -53,16 +54,18 @@ class Console(cli.Base):
             password = None
         server = self.__getServerConnector(arguments)
         device = self.__get_device(arguments)
-        response = server.startSession(device, password)
+        device = Device.fromProtobuf(device)
+        print("Selecting %s (%s %s %s)\n" % (device.device_id, device.manufacturer, device.model, device.software))
+        response = server.startSession(device.device_id, password)
         if response.type == Message.SYSTEM_RESPONSE and\
             response.system_response.status == Message.SystemResponse.SUCCESS:
             session_id = response.system_response.session_id
             session = None
             try:
                 if(arguments.debug):
-                    session = DebugSession(server, session_id, arguments)
+                    session = DebugSession(server, session_id, arguments, device.bundle)
                 else:
-                    session = Session(server, session_id, arguments)
+                    session = Session(server, session_id, arguments, device.bundle)
                 if len(arguments.file) > 0:
                     print("Length is above 0")
                     session.do_load(" ".join(arguments.file))
@@ -167,24 +170,23 @@ class Console(cli.Base):
         """
         Determines which device to request after connecting to the server.
         """
-        if arguments.device == None:
-            devices = self.__getServerConnector(arguments).listDevices().system_response.devices
+        devices = self.__getServerConnector(arguments).listDevices().system_response.devices
 
-            if len(devices) == 1:
-                device = devices[0].id
+        if arguments.device:
+            for device in devices:
+                if device.id == arguments.device:
+                    return device
+            print(f"Device with the ID {arguments.device} not found.")
 
-                print("Selecting %s (%s %s %s)\n" % (devices[0].id, devices[0].manufacturer, devices[0].model, devices[0].software))
-                return device
-            elif len(devices) == 0:
-                print("No devices available.\n")
+        elif len(devices) == 1:
+            print(devices)
+            return devices[0]
 
-                sys.exit(-1)
-            else:
-                print("More than one device available. Please specify the target device ID.\n")
-
-                sys.exit(-1)
+        elif len(devices) == 0:
+            print("No devices available.\n")
         else:
-            return arguments.device
+            print("More than one device available. Please specify the target device ID.\n")
+        sys.exit(-1)
 
     def __getServerConnector(self, arguments):
         """

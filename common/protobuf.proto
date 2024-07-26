@@ -177,6 +177,7 @@ message Message {
     required string manufacturer = 2;
     required string model = 3;
     required string software = 4;
+    optional string bundle = 5;
 
   }
 
