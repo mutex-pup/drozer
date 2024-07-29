@@ -289,9 +289,9 @@ class Cmd(cmd.Cmd):
             pass
         # check for new agent versions
         try:
-            packageManager = self.context().getPackageManager()
-            pm = self.reflector.resolve("android.content.pm.PackageManager")
-            agentVersion = meta.Version(packageManager.getPackageInfo('com.WithSecure.dz', pm.GET_META_DATA).versionName)
+            context = self.context()
+            packageManager = context.getPackageManager()
+            agentVersion = meta.Version(packageManager.getPackageInfo(context.getPackageName(), packageManager.GET_META_DATA).versionName)
             latestAgent, dateAgent = meta.latest_agent_version()
             if latestAgent is not None:
                 if agentVersion < latestAgent:
