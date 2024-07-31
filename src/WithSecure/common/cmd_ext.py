@@ -275,6 +275,7 @@ class Cmd(cmd.Cmd):
         return line
 
     def checkVer(self):
+        # check for new console versions
         try:
             latest, date = meta.latest_version()
             if latest is not None:
@@ -284,6 +285,18 @@ class Cmd(cmd.Cmd):
                     print("It seems that you are running an old version of drozer. drozer v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer visit:\nhttps://github.com/WithSecureLabs/drozer/releases\n" % (latest, date))
         except Exception as e:
             #silence this exception unless in debug mode
+            self.handleException(e, shutup=True)
+            pass
+        # check for new agent versions
+        try:
+            context = self.context()
+            packageManager = context.getPackageManager()
+            agentVersion = meta.Version(packageManager.getPackageInfo(context.getPackageName(), packageManager.GET_META_DATA).versionName)
+            latestAgent, dateAgent = meta.latest_agent_version()
+            if latestAgent is not None:
+                if agentVersion < latestAgent:
+                    print("It seems that you are running an old version of drozer-agent. drozer-agent v%s was\nreleased on %s. We suggest that you update your copy to make sure that\nyou have the latest features and fixes.\n\nTo download the latest drozer-agent visit:\nhttps://github.com/WithSecureLabs/drozer-agent/releases\n" % (latestAgent, dateAgent))
+        except Exception as e:
             self.handleException(e, shutup=True)
             pass
 

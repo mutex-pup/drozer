@@ -40,6 +40,18 @@ def latest_version():
         return None
     except URLError:
         return None
+        
+def latest_agent_version():
+    try:
+        response = urlopen(Request("https://api.github.com/repos/WithSecureLabs/drozer-agent/releases/latest", None, {"user-agent": "drozer: %s" % str(version)}), None, 1)
+        latestTag = json.load(response)
+        latestAgentVersion = Version(latestTag["tag_name"]), latestTag["created_at"][:10]
+        return latestAgentVersion
+    except HTTPError:
+        return None
+    except URLError:
+        return None
+
 
 def print_version():
     print("%s %s\n" % ("drozer", version))
