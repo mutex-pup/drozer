@@ -369,7 +369,7 @@ class Session(cmd.Cmd):
             self.stdout.write("Has ApplicationContext: YES\n")
             self.stdout.write("Available Permissions:\n")
             for permission in sorted(self.permissions()):
-                if permission != "com.WithSecure.dz.permissions.GET_CONTEXT":
+                if permission not in ["GET_CONTEXT", "com.WithSecure.dz.permissions.GET_CONTEXT", "com.mwr.dz.permissions.GET_CONTEXT"]:
                     self.stdout.write(" - %s\n" % (permission))
         else:
             self.stdout.write("Has ApplicationContext: NO\n")
@@ -573,6 +573,8 @@ class Session(cmd.Cmd):
                         self.__permissions.append(str(permission))
             
             self.__permissions.append("com.WithSecure.dz.permissions.GET_CONTEXT")
+            self.__permissions.append("com.mwr.dz.permissions.GET_CONTEXT")
+            self.__permissions.append("GET_CONTEXT")
         elif self.__permissions == None:
             self.__permissions = []
         
