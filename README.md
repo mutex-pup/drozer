@@ -36,7 +36,13 @@ To help with making sure drozer can be run on all systems, a Docker container wa
 
 ### Installing
 
-You can use `pip` or `pipx` (preferably, if available) to install the latest release of drozer from our [releases](https://github.com/WithSecureLabs/drozer/releases/latest):
+You can use `pip` or `pipx` (preferably, if available) to install the latest release of drozer from PyPI:
+
+```shell
+pipx install drozer
+```
+
+Alternatively, you can download individual [releases](https://github.com/WithSecureLabs/drozer/releases/) from GitHub and run:
 
 ```shell
 pipx install ./drozer-*.whl
