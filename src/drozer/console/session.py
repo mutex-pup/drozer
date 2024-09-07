@@ -422,7 +422,7 @@ class Session(cmd.Cmd):
         method defined on the specified module.
         """
 
-        _line = re.match("(run\s+)([^\s]*)(\s*)", line)
+        _line = re.match(r"(run\s+)([^\s]*)(\s*)", line)
 
         # figure out where the module name starts in the string
         cmdidx = len(_line.group(1))
